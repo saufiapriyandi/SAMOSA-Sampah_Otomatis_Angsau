@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sdn4angsau.samosa.databinding.ItemTempatSampahBinding
 
-class TempatSampahAdapter(private val listSampah: List<TempatSampah>) :
+class TempatSampahAdapter(private var listSampah: List<TempatSampah>) :
     RecyclerView.Adapter<TempatSampahAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ItemTempatSampahBinding) : RecyclerView.ViewHolder(binding.root)
@@ -51,4 +51,10 @@ class TempatSampahAdapter(private val listSampah: List<TempatSampah>) :
     }
 
     override fun getItemCount(): Int = listSampah.size
+
+    // Fungsi untuk memperbarui daftar saat pencarian dilakukan
+    fun updateData(newList: List<TempatSampah>) {
+        listSampah = newList
+        notifyDataSetChanged()
+    }
 }

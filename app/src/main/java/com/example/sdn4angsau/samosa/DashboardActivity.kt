@@ -2,6 +2,8 @@ package com.example.sdn4angsau.samosa
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,11 +33,29 @@ class DashboardActivity : AppCompatActivity() {
         binding.rvTempatSampah.layoutManager = LinearLayoutManager(this)
         binding.rvTempatSampah.adapter = sampahAdapter
 
-        // Perintah untuk tombol keluar
+        // Perintah Logout
         binding.btnLogout.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
+
+        // Perintah Fitur Pencarian Real-time
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val keyword = s.toString().lowercase()
+
+                // Menyaring daftar sampah berdasarkan huruf yang diketik
+                val hasilFilter = dataContoh.filter {
+                    it.lokasi.lowercase().contains(keyword)
+                }
+
+                // Mengirim hasil ke adapter untuk ditampilkan
+                sampahAdapter.updateData(hasilFilter)
+            }
+        })
     }
 }
