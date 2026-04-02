@@ -34,6 +34,7 @@
                 app:cardBackgroundColor="#33FFFFFF"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
+
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -87,12 +88,16 @@
                     app:cardBackgroundColor="#33FFFFFF"
                     app:cardCornerRadius="8dp"
                     app:cardElevation="0dp">
+
                     <ImageView
+                        android:id="@+id/btnProfile"
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_launcher_foreground"
-                        app:tint="#FFFFFF" />
+                        app:tint="#FFFFFF"
+                        android:clickable="true"
+                        android:focusable="true"/>
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView

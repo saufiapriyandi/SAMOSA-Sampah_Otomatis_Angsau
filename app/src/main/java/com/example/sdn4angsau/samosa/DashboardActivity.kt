@@ -33,6 +33,12 @@ class DashboardActivity : AppCompatActivity() {
         binding.rvTempatSampah.layoutManager = LinearLayoutManager(this)
         binding.rvTempatSampah.adapter = sampahAdapter
 
+        // Perintah menuju halaman Profil
+        binding.btnProfile.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
+
         // Perintah Logout
         binding.btnLogout.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
