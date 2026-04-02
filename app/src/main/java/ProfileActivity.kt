@@ -1,8 +1,11 @@
 package com.example.sdn4angsau.samosa
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.sdn4angsau.samosa.databinding.ActivityProfileBinding
 
 class ProfileActivity : AppCompatActivity() {
@@ -16,9 +19,24 @@ class ProfileActivity : AppCompatActivity() {
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Fungsi untuk tombol kembali yang baru (btnBackProfile)
+        // MEMAKSA IKON JAM & BATERAI MENJADI PUTIH TERANG
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+
         binding.btnBackProfile.setOnClickListener {
-            finish() // Perintah ini akan menutup halaman profil dan kembali ke halaman sebelumnya
+            finish()
+        }
+
+        // FUNGSI TOMBOL LOGOUT
+        binding.btnLogoutProfile.setOnClickListener {
+            val sharedPref = getSharedPreferences("SesiSamosa", Context.MODE_PRIVATE)
+            val editor = sharedPref.edit()
+            editor.putBoolean("SUDAH_LOGIN", false)
+            editor.apply()
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
         }
     }
 }
