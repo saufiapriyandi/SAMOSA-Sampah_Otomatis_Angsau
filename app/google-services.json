@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "994935323660",
+    "project_id": "samosa-sampah-otomatis-angsau",
+    "storage_bucket": "samosa-sampah-otomatis-angsau.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994935323660:android:423afaf964076286518229",
+        "android_client_info": {
+          "package_name": "com.example.sdn4angsau.samosa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAg4lWYbOB7LQ1Av1m_jpk3I2V9lC-rSHk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
