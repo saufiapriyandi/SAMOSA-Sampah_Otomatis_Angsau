@@ -29,21 +29,22 @@ class TempatSampahAdapter(private var listSampah: List<TempatSampah>) :
                     tvPersentase.setTextColor(Color.parseColor("#FF4B4B"))
                     tvStatusPesan.text = "PENUH - SEGERA KOSONGKAN"
                     tvStatusPesan.setTextColor(Color.parseColor("#FF4B4B"))
-                    tvStatusPesan.setBackgroundColor(Color.parseColor("#1AFF4B4B"))
+                    // YANG DIUBAH: Sekarang mewarnai CardView-nya
+                    cardStatusPesan.setCardBackgroundColor(Color.parseColor("#1AFF4B4B"))
                     bgIconSampah.setCardBackgroundColor(Color.parseColor("#FF4B4B"))
                 }
                 item.persentase >= 60 -> {
                     tvPersentase.setTextColor(Color.parseColor("#FFA500"))
                     tvStatusPesan.text = "SEDANG - MASIH BISA"
                     tvStatusPesan.setTextColor(Color.parseColor("#FFA500"))
-                    tvStatusPesan.setBackgroundColor(Color.parseColor("#1AFFA500"))
+                    cardStatusPesan.setCardBackgroundColor(Color.parseColor("#1AFFA500"))
                     bgIconSampah.setCardBackgroundColor(Color.parseColor("#FFA500"))
                 }
                 else -> {
                     tvPersentase.setTextColor(Color.parseColor("#20B273"))
                     tvStatusPesan.text = "KOSONG - BERSIH"
                     tvStatusPesan.setTextColor(Color.parseColor("#20B273"))
-                    tvStatusPesan.setBackgroundColor(Color.parseColor("#1A20B273"))
+                    cardStatusPesan.setCardBackgroundColor(Color.parseColor("#1A20B273"))
                     bgIconSampah.setCardBackgroundColor(Color.parseColor("#20B273"))
                 }
             }
@@ -61,7 +62,6 @@ class TempatSampahAdapter(private var listSampah: List<TempatSampah>) :
 
     override fun getItemCount(): Int = listSampah.size
 
-    // Fungsi untuk memperbarui daftar saat pencarian dilakukan
     fun updateData(newList: List<TempatSampah>) {
         listSampah = newList
         notifyDataSetChanged()
