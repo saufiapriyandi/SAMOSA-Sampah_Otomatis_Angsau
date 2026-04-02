@@ -72,6 +72,7 @@
                     android:text="UPDATE: 14:30 WIB"
                     android:textColor="#E0E0E0"
                     android:textSize="10sp"
+                    android:textStyle="bold"
                     android:layout_marginTop="2dp"/>
             </LinearLayout>
 
@@ -153,6 +154,7 @@
                     android:textColor="#FFFFFF"
                     android:layout_marginStart="12dp"
                     android:textSize="14sp"
+                    android:textStyle="bold"
                     android:singleLine="true"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -338,9 +340,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TERDAPAT 1 TITIK PEMBUANGAN SAMPAH 100% PENUH. SEGERA TINDAK LANJUTI!"
+                        android:text="Terdapat 1 titik pembuangan sampah 100% penuh. Segera tindak lanjuti!"
                         android:textColor="#FFFFFF"
-                        android:textSize="10sp"
+                        android:textSize="11sp"
                         android:layout_marginTop="4dp"
                         android:lineSpacingExtra="2dp"/>
                 </LinearLayout>

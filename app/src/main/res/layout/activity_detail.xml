@@ -174,7 +174,7 @@
                 android:layout_marginBottom="12dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="1dp">
+                app:cardElevation="2dp">
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
                     <androidx.cardview.widget.CardView android:layout_width="40dp" android:layout_height="40dp" app:cardBackgroundColor="#F5F7F9" app:cardCornerRadius="20dp" app:cardElevation="0dp">
@@ -183,7 +183,7 @@
 
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
                         <TextView android:id="@+id/tvLogTerbaruStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Data Terkini Diperbarui" android:textSize="14sp" android:textStyle="bold" android:textColor="#222222"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sensor Ultrasonik mendeteksi perubahan" android:textSize="11sp" android:textColor="#888888" android:layout_marginTop="2dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sensor Ultrasonik mendeteksi perubahan" android:textSize="12sp" android:textColor="#555555" android:layout_marginTop="2dp"/>
                     </LinearLayout>
 
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Kini" android:textSize="12sp" android:textColor="#20B273" android:textStyle="bold"/>
@@ -196,14 +196,13 @@
                 android:layout_marginBottom="12dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="0dp">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12:00" android:textSize="12sp" android:textColor="#888888" android:textStyle="bold" android:layout_marginEnd="16dp"/>
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mencapai 65% Volume" android:textSize="14sp" android:textColor="#333333"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pengukuran siang hari" android:textSize="11sp" android:textColor="#AAAAAA"/>
-                    </LinearLayout>
+                app:cardElevation="2dp"> <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12:00" android:textSize="14sp" android:textColor="#222222" android:textStyle="bold" android:layout_marginEnd="16dp"/>
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mencapai 65% Volume" android:textSize="14sp" android:textStyle="bold" android:textColor="#222222"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pengukuran siang hari" android:textSize="12sp" android:textColor="#555555"/>
                 </LinearLayout>
+            </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
@@ -212,12 +211,12 @@
                 android:layout_marginBottom="12dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="0dp">
+                app:cardElevation="2dp">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="08:00" android:textSize="12sp" android:textColor="#888888" android:textStyle="bold" android:layout_marginEnd="16dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="08:00" android:textSize="14sp" android:textColor="#222222" android:textStyle="bold" android:layout_marginEnd="16dp"/>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sistem Direset / Kosong" android:textSize="14sp" android:textColor="#333333"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pengukuran pagi hari" android:textSize="11sp" android:textColor="#AAAAAA"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sistem Direset / Kosong" android:textSize="14sp" android:textStyle="bold" android:textColor="#222222"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pengukuran pagi hari" android:textSize="12sp" android:textColor="#555555"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
