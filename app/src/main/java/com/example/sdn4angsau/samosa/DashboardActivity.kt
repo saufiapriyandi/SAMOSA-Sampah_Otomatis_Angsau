@@ -25,41 +25,38 @@ class DashboardActivity : AppCompatActivity() {
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 1. Mengukur ukuran Poni HP dan menerapkannya ke Jarak Atas serta Kotak Buatan
-        ViewCompat.setOnApplyWindowInsetsListener(binding.topBar) { view, insets ->
-            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+        // 1. MENDETEKSI PONI HP (ATAS) & TOMBOL NAVIGASI (BAWAH)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            // Memberi jarak pada konten utama
-            val extraPadding = (16 * resources.displayMetrics.density).toInt()
-            view.setPadding(view.paddingLeft, statusBarHeight + extraPadding, view.paddingRight, view.paddingBottom)
+            // Jarak Atas
+            val extraPaddingTop = (16 * resources.displayMetrics.density).toInt()
+            binding.topBar.setPadding(binding.topBar.paddingLeft, systemBars.top + extraPaddingTop, binding.topBar.paddingRight, binding.topBar.paddingBottom)
 
-            // Mengatur tinggi kotak hijau buatan kita agar sama persis dengan tinggi Poni HP
+            // Kotak Status Bar Buatan
             val layoutParams = binding.fakeStatusBar.layoutParams
-            layoutParams.height = statusBarHeight
+            layoutParams.height = systemBars.top
             binding.fakeStatusBar.layoutParams = layoutParams
+
+            // Jarak Bawah
+            binding.scrollView.setPadding(binding.scrollView.paddingLeft, binding.scrollView.paddingTop, binding.scrollView.paddingRight, systemBars.bottom)
 
             insets
         }
 
-        // Memastikan ikon status bar selalu putih agar kontras dengan hijau
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
-        // 2. EFEK MEMUDAR (FADE) PADA KOTAK BUATAN SAAT DIGULIR
+        // 2. EFEK MEMUDAR (FADE) STATUS BAR
         binding.scrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
-            // Menghitung transparansi berdasarkan posisi scroll (0 sampai 150)
             val alpha = (scrollY / 150f).coerceIn(0f, 1f)
-
-            // Terapkan transparansi ke kotak buatan
             binding.fakeStatusBar.alpha = alpha
 
-            // Tambahan: beri bayangan (elevation) sedikit saat sudah pekat
             if (alpha == 1f) {
                 binding.fakeStatusBar.elevation = 8f
             } else {
                 binding.fakeStatusBar.elevation = 0f
             }
         })
-
 
         // --- DAFTAR DATA SAMPAH ---
         val dataContoh = listOf(
@@ -75,17 +72,13 @@ class DashboardActivity : AppCompatActivity() {
         binding.rvTempatSampah.layoutManager = LinearLayoutManager(this)
         binding.rvTempatSampah.adapter = sampahAdapter
 
+        // PERINTAH KLIK PROFIL
         binding.btnProfile.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
 
-        binding.btnLogout.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
+        // PENCARIAN
         binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}

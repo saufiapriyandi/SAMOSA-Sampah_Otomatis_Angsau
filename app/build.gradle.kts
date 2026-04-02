@@ -31,9 +31,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    // Tambahan untuk mengaktifkan ViewBinding
     buildFeatures {
         viewBinding = true
+    }
+
+    androidResources {
+        // Ignore .svg files in res directories
+        ignoreAssetsPattern = "!.svg:!.SVG"
     }
 }
 
@@ -48,15 +52,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // Tambahan library untuk proyek SAMOSA
-    // Retrofit untuk mengambil data dari server
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    // Coroutines untuk proses latar belakang
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-    // Komponen Arsitektur (ViewModel dan LiveData)
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 }
