@@ -47,6 +47,15 @@ class TempatSampahAdapter(private var listSampah: List<TempatSampah>) :
                     bgIconSampah.setCardBackgroundColor(Color.parseColor("#20B273"))
                 }
             }
+
+            // Perintah klik untuk pindah ke halaman Detail
+            root.setOnClickListener {
+                val intent = android.content.Intent(it.context, DetailActivity::class.java)
+                intent.putExtra("EXTRA_LOKASI", item.lokasi)
+                intent.putExtra("EXTRA_BINID", item.binId)
+                intent.putExtra("EXTRA_PERSENTASE", item.persentase)
+                it.context.startActivity(intent)
+            }
         }
     }
 
