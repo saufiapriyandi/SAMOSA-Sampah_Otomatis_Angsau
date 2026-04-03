@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "994935323660",
+    "firebase_url": "https://samosa-sampah-otomatis-angsau-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "samosa-sampah-otomatis-angsau",
     "storage_bucket": "samosa-sampah-otomatis-angsau.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.example.sdn4angsau.samosa"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "994935323660-1rb8ksm6n7phmjhh15d0v4f3rvlrhels.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sdn4angsau.samosa",
+            "certificate_hash": "57237221de834643763bcd8760e8f12a6fd99946"
+          }
+        },
+        {
+          "client_id": "994935323660-bd0804272at74mi04lmbago7itmqrvga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAg4lWYbOB7LQ1Av1m_jpk3I2V9lC-rSHk"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "994935323660-bd0804272at74mi04lmbago7itmqrvga.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
