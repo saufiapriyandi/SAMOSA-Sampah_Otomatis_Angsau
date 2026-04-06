@@ -3,11 +3,14 @@ package com.example.sdn4angsau.samosa
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sdn4angsau.samosa.databinding.ItemTempatSampahBinding
 
-class TempatSampahAdapter(private var listSampah: List<TempatSampah>) :
-    RecyclerView.Adapter<TempatSampahAdapter.ViewHolder>() {
+class TempatSampahAdapter(
+    private val onItemClick: (TempatSampah) -> Unit
+) : ListAdapter<TempatSampah, TempatSampahAdapter.ViewHolder>(DiffCallback) {
 
     class ViewHolder(val binding: ItemTempatSampahBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -17,53 +20,53 @@ class TempatSampahAdapter(private var listSampah: List<TempatSampah>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = listSampah[position]
+        val item = getItem(position)
+        val context = holder.binding.root.context
 
         with(holder.binding) {
             tvLokasi.text = item.lokasi
-            tvBinId.text = "BIN-ID: ${item.binId}"
+            tvBinId.text = context.getString(R.string.dashboard_bin_id_format, item.binId)
             tvPersentase.text = "${item.persentase}%"
 
-            when {
-                item.persentase >= 90 -> {
+            when (item.status) {
+                TempatSampahStatus.PENUH -> {
                     tvPersentase.setTextColor(Color.parseColor("#FF4B4B"))
-                    tvStatusPesan.text = "PENUH - SEGERA KOSONGKAN"
+                    tvStatusPesan.text = context.getString(R.string.dashboard_status_full)
                     tvStatusPesan.setTextColor(Color.parseColor("#FF4B4B"))
-                    // YANG DIUBAH: Sekarang mewarnai CardView-nya
                     cardStatusPesan.setCardBackgroundColor(Color.parseColor("#1AFF4B4B"))
                     bgIconSampah.setCardBackgroundColor(Color.parseColor("#FF4B4B"))
                 }
-                item.persentase >= 60 -> {
+                TempatSampahStatus.WASPADA -> {
                     tvPersentase.setTextColor(Color.parseColor("#FFA500"))
-                    tvStatusPesan.text = "SEDANG - MASIH BISA"
+                    tvStatusPesan.text = context.getString(R.string.dashboard_status_warning)
                     tvStatusPesan.setTextColor(Color.parseColor("#FFA500"))
                     cardStatusPesan.setCardBackgroundColor(Color.parseColor("#1AFFA500"))
                     bgIconSampah.setCardBackgroundColor(Color.parseColor("#FFA500"))
                 }
-                else -> {
+                TempatSampahStatus.AMAN -> {
                     tvPersentase.setTextColor(Color.parseColor("#20B273"))
-                    tvStatusPesan.text = "KOSONG - BERSIH"
+                    tvStatusPesan.text = context.getString(R.string.dashboard_status_safe)
                     tvStatusPesan.setTextColor(Color.parseColor("#20B273"))
                     cardStatusPesan.setCardBackgroundColor(Color.parseColor("#1A20B273"))
                     bgIconSampah.setCardBackgroundColor(Color.parseColor("#20B273"))
                 }
             }
 
-            // Perintah klik untuk pindah ke halaman Detail
             root.setOnClickListener {
-                val intent = android.content.Intent(it.context, DetailActivity::class.java)
-                intent.putExtra("EXTRA_LOKASI", item.lokasi)
-                intent.putExtra("EXTRA_BINID", item.binId)
-                intent.putExtra("EXTRA_PERSENTASE", item.persentase)
-                it.context.startActivity(intent)
+                onItemClick(item)
             }
         }
     }
 
-    override fun getItemCount(): Int = listSampah.size
+    companion object {
+        private val DiffCallback = object : DiffUtil.ItemCallback<TempatSampah>() {
+            override fun areItemsTheSame(oldItem: TempatSampah, newItem: TempatSampah): Boolean {
+                return oldItem.binId == newItem.binId
+            }
 
-    fun updateData(newList: List<TempatSampah>) {
-        listSampah = newList
-        notifyDataSetChanged()
+            override fun areContentsTheSame(oldItem: TempatSampah, newItem: TempatSampah): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 }

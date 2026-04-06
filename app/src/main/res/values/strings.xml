@@ -23,11 +23,59 @@
     <string name="tutorial_dashboard_points">- Gunakan kolom cari untuk lokasi tertentu.\n- Cek kartu ringkasan: total, penuh, kosong.\n- Jika merah, segera tindak lanjut.</string>
     <string name="tutorial_section_detail">Detail Tempat Sampah</string>
     <string name="tutorial_detail_hint">Grafik naik = sampah bertambah</string>
-    <string name="tutorial_detail_points">- Menampilkan nama lokasi, BIN-ID, dan tanggal.\n- Pilih hari (Sen-Jum) untuk lihat riwayat.\n- Baca log sensor untuk kondisi terakhir.</string>
+    <string name="tutorial_detail_points">- Menampilkan nama lokasi, BIN-ID, dan tanggal.\n- Pilih hari (Sen-Jum) untuk lihat riwayat.\n- Baca log kondisi terakhir.</string>
     <string name="tutorial_warning_symbol">!</string>
     <string name="tutorial_section_status">Arti Warna Status</string>
     <string name="tutorial_status_green">Hijau: aman</string>
     <string name="tutorial_status_orange">Oranye: mulai penuh, pantau</string>
     <string name="tutorial_status_red">Merah: penuh, segera kosongkan</string>
     <string name="tutorial_close_button">Tutup Tutorial</string>
+
+    <string name="dashboard_update_format">UPDATE: %1$s</string>
+    <string name="dashboard_update_placeholder">UPDATE: --:--</string>
+    <string name="dashboard_welcome_label">SELAMAT DATANG, KEPALA SEKOLAH</string>
+    <string name="dashboard_search_hint">Cari lokasi tong sampah...</string>
+    <string name="dashboard_summary_total_label">TOTAL</string>
+    <string name="dashboard_summary_full_label">PENUH</string>
+    <string name="dashboard_summary_safe_label">AMAN</string>
+    <string name="dashboard_legend_safe">AMAN</string>
+    <string name="dashboard_legend_warning">WASPADA</string>
+    <string name="dashboard_legend_full">PENUH</string>
+    <string name="dashboard_status_section_title">Status Real-time</string>
+    <string name="dashboard_monitor_chip">MONITOR</string>
+    <string name="dashboard_warning_symbol">!</string>
+    <string name="dashboard_warning_title">Peringatan Sistem!</string>
+    <string name="dashboard_warning_placeholder">Memeriksa kondisi tong sampah...</string>
+    <string name="dashboard_warning_message_single">%1$s sudah %2$d%% penuh. Segera tindak lanjuti!</string>
+    <string name="dashboard_warning_message_multiple">%1$d titik pembuangan sudah penuh. Prioritaskan %2$s terlebih dahulu.</string>
+    <string name="dashboard_error_title">Data belum bisa dimuat</string>
+    <string name="dashboard_error_message_default">Coba lagi beberapa saat lagi.</string>
+    <string name="dashboard_retry_button">Coba Lagi</string>
+    <string name="dashboard_empty_search">Tidak ada lokasi yang cocok dengan pencarian.</string>
+    <string name="dashboard_bin_id_format">BIN-ID: %1$s</string>
+    <string name="dashboard_status_full">PENUH - SEGERA KOSONGKAN</string>
+    <string name="dashboard_status_warning">WASPADA - PANTAU</string>
+    <string name="dashboard_status_safe">AMAN - TERKENDALI</string>
+
+    <string name="detail_unknown_location">Lokasi Tidak Diketahui</string>
+    <string name="detail_bin_id_format">BIN-ID: %1$s</string>
+    <string name="detail_log_title">Riwayat Pantauan</string>
+    <string name="detail_log_subtitle_current">Perubahan volume terpantau pada data contoh</string>
+    <string name="detail_now_label">Kini</string>
+    <string name="detail_last_reading_label">16:00</string>
+    <string name="detail_status_full">PENUH</string>
+    <string name="detail_status_warning">WASPADA</string>
+    <string name="detail_status_safe">AMAN</string>
+    <string name="detail_status_format">Status: %1$s (%2$d%%)</string>
+
+    <string name="notification_channel_name">Peringatan tong sampah</string>
+    <string name="notification_channel_description">Notifikasi tong sampah penuh dan pengingat berkala</string>
+    <string name="notification_full_title">Tong sampah penuh</string>
+    <string name="notification_full_message">%1$s (%2$s) sudah mencapai %3$d%%.</string>
+    <string name="notification_reminder_title">Pengingat tong sampah</string>
+    <string name="notification_reminder_message">%1$s (%2$s) masih %3$d%% penuh. Mohon segera diperiksa.</string>
+
+    <string name="cd_dashboard_search_icon">Ikon pencarian</string>
+    <string name="cd_dashboard_monitor_icon">Ikon status monitor</string>
+    <string name="cd_bin_icon">Ikon tempat sampah</string>
 </resources>

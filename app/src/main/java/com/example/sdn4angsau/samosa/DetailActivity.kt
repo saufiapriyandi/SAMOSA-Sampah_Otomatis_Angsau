@@ -32,12 +32,12 @@ class DetailActivity : AppCompatActivity() {
 
         val hariIniAsli = calendar.get(Calendar.DAY_OF_WEEK)
 
-        val namaLokasi = intent.getStringExtra("EXTRA_LOKASI") ?: "Lokasi Tidak Diketahui"
+        val namaLokasi = intent.getStringExtra("EXTRA_LOKASI") ?: getString(R.string.detail_unknown_location)
         val binId = intent.getStringExtra("EXTRA_BINID") ?: "-"
         val persentaseAsliKini = intent.getIntExtra("EXTRA_PERSENTASE", 0)
 
         binding.tvDetailLokasi.text = namaLokasi
-        binding.tvDetailBinId.text = "BIN-ID: $binId"
+        binding.tvDetailBinId.text = getString(R.string.detail_bin_id_format, binId)
 
         val dataSenin = listOf(0, 15, 30, 45, 50)
         val dataSelasa = listOf(10, 40, 70, 95, 100)
@@ -79,17 +79,19 @@ class DetailActivity : AppCompatActivity() {
         aturBalok(binding.tvGrafikSekarang, binding.barGrafikSekarang, dataHarian[4])
 
         if (isHariIni) {
-            binding.tvWaktuKini.text = "Kini"
+            binding.tvWaktuKini.text = getString(R.string.detail_now_label)
         } else {
-            binding.tvWaktuKini.text = "16:00"
+            binding.tvWaktuKini.text = getString(R.string.detail_last_reading_label)
         }
 
         val persentaseKini = dataHarian[4]
-        when {
-            persentaseKini >= 90 -> binding.tvLogTerbaruStatus.text = "Status: PENUH ($persentaseKini%)"
-            persentaseKini >= 60 -> binding.tvLogTerbaruStatus.text = "Status: WASPADA ($persentaseKini%)"
-            else -> binding.tvLogTerbaruStatus.text = "Status: AMAN ($persentaseKini%)"
+        val statusLabel = when {
+            persentaseKini >= 90 -> getString(R.string.detail_status_full)
+            persentaseKini >= 60 -> getString(R.string.detail_status_warning)
+            else -> getString(R.string.detail_status_safe)
         }
+        binding.tvLogTerbaruStatus.text =
+            getString(R.string.detail_status_format, statusLabel, persentaseKini)
     }
 
     private fun aturBalok(tvVal: TextView, barCard: CardView, persentase: Int) {

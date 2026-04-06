@@ -45,6 +45,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center"
+                        android:contentDescription="@string/cd_school_icon"
                         android:src="@drawable/ic_school"
                         app:tint="#FFFFFF" />
                 </androidx.cardview.widget.CardView>
@@ -59,7 +60,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="SELAMAT DATANG, KEPALA SEKOLAH"
+                        android:text="@string/dashboard_welcome_label"
                         android:textColor="#E0E0E0"
                         android:textSize="10sp"
                         android:textStyle="bold"
@@ -68,15 +69,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="UPTD SDN 4 Angsau"
+                        android:text="@string/profile_institution_name"
                         android:textColor="#FFFFFF"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvLastUpdate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="UPDATE: 14:30 WIB"
+                        android:text="@string/dashboard_update_placeholder"
                         android:textColor="#E0E0E0"
                         android:textSize="10sp"
                         android:textStyle="bold"
@@ -95,6 +97,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center"
+                        android:contentDescription="@string/cd_profile_icon"
                         android:src="@drawable/ic_profile"
                         app:tint="#FFFFFF"
                         android:clickable="true"
@@ -123,6 +126,7 @@
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:contentDescription="@string/cd_dashboard_search_icon"
                         android:src="@drawable/ic_search"
                         app:tint="#FFFFFF"/>
 
@@ -131,7 +135,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
-                        android:hint="Cari lokasi tong sampah..."
+                        android:hint="@string/dashboard_search_hint"
                         android:textColorHint="#E0E0E0"
                         android:textColor="#FFFFFF"
                         android:layout_marginStart="12dp"
@@ -166,8 +170,8 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TOTAL" android:textSize="11sp" android:textColor="#888888" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="5" android:textSize="26sp" android:textColor="#333333" android:textStyle="bold" android:layout_marginTop="2dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_summary_total_label" android:textSize="11sp" android:textColor="#888888" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvSummaryTotalValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="26sp" android:textColor="#333333" android:textStyle="bold" android:layout_marginTop="2dp" tools:text="0"/>
                     </LinearLayout>
 
                     <View android:layout_width="1dp" android:layout_height="match_parent" android:background="#E0E0E0" android:layout_marginVertical="8dp"/>
@@ -178,8 +182,8 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="PENUH" android:textSize="11sp" android:textColor="#FF4B4B" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2" android:textSize="26sp" android:textColor="#FF4B4B" android:textStyle="bold" android:layout_marginTop="2dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_summary_full_label" android:textSize="11sp" android:textColor="#FF4B4B" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvSummaryFullValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="26sp" android:textColor="#FF4B4B" android:textStyle="bold" android:layout_marginTop="2dp" tools:text="0"/>
                     </LinearLayout>
 
                     <View android:layout_width="1dp" android:layout_height="match_parent" android:background="#E0E0E0" android:layout_marginVertical="8dp"/>
@@ -190,8 +194,8 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="KOSONG" android:textSize="11sp" android:textColor="#20B273" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2" android:textSize="26sp" android:textColor="#20B273" android:textStyle="bold" android:layout_marginTop="2dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_summary_safe_label" android:textSize="11sp" android:textColor="#20B273" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvSummarySafeValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="26sp" android:textColor="#20B273" android:textStyle="bold" android:layout_marginTop="2dp" tools:text="0"/>
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -215,13 +219,13 @@
                     android:paddingVertical="12dp">
 
                     <androidx.cardview.widget.CardView android:layout_width="10dp" android:layout_height="10dp" app:cardCornerRadius="5dp" app:cardBackgroundColor="#20B273" app:cardElevation="0dp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="AMAN" android:textSize="11sp" android:layout_marginStart="6dp" android:layout_marginEnd="20dp" android:textColor="#555555" android:textStyle="bold"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_legend_safe" android:textSize="11sp" android:layout_marginStart="6dp" android:layout_marginEnd="20dp" android:textColor="#555555" android:textStyle="bold"/>
 
                     <androidx.cardview.widget.CardView android:layout_width="10dp" android:layout_height="10dp" app:cardCornerRadius="5dp" app:cardBackgroundColor="#FFA500" app:cardElevation="0dp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="WASPADA" android:textSize="11sp" android:layout_marginStart="6dp" android:layout_marginEnd="20dp" android:textColor="#555555" android:textStyle="bold"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_legend_warning" android:textSize="11sp" android:layout_marginStart="6dp" android:layout_marginEnd="20dp" android:textColor="#555555" android:textStyle="bold"/>
 
                     <androidx.cardview.widget.CardView android:layout_width="10dp" android:layout_height="10dp" app:cardCornerRadius="5dp" app:cardBackgroundColor="#FF4B4B" app:cardElevation="0dp"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="PENUH" android:textSize="11sp" android:layout_marginStart="6dp" android:textColor="#555555" android:textStyle="bold"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_legend_full" android:textSize="11sp" android:layout_marginStart="6dp" android:textColor="#555555" android:textStyle="bold"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -238,6 +242,7 @@
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
+                    android:contentDescription="@string/cd_dashboard_monitor_icon"
                     android:src="@drawable/ic_monitor"
                     app:tint="#20B273"
                     android:layout_marginEnd="10dp"/>
@@ -246,7 +251,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Status Real-time"
+                    android:text="@string/dashboard_status_section_title"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="#222222" />
@@ -260,7 +265,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="MONITOR"
+                        android:text="@string/dashboard_monitor_chip"
                         android:textColor="#20B273"
                         android:textSize="11sp"
                         android:textStyle="bold"
@@ -297,7 +302,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="!"
+                            android:text="@string/dashboard_warning_symbol"
                             android:textColor="#FF4B4B"
                             android:textSize="24sp"
                             android:textStyle="bold"
@@ -311,17 +316,19 @@
                         android:layout_marginStart="16dp">
 
                         <TextView
+                            android:id="@+id/tvWarningTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Peringatan Sistem!"
+                            android:text="@string/dashboard_warning_title"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp"
                             android:textStyle="bold"/>
 
                         <TextView
+                            android:id="@+id/tvWarningMessage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Terdapat 1 titik pembuangan sampah 100% penuh. Segera tindak lanjuti!"
+                            android:text="@string/dashboard_warning_placeholder"
                             android:textColor="#FFFFFF"
                             android:textSize="11sp"
                             android:layout_marginTop="4dp"
@@ -330,18 +337,89 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvTempatSampah"
+            <LinearLayout
+                android:id="@+id/layoutDashboardState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:clipToPadding="false"
+                android:orientation="vertical"
                 android:paddingHorizontal="24dp"
                 android:paddingBottom="32dp"
-                android:nestedScrollingEnabled="false"
-                app:layout_constraintTop_toBottomOf="@id/cardWarning"
                 app:layout_constraintBottom_toBottomOf="parent"
-                tools:listitem="@layout/item_tempat_sampah" />
+                app:layout_constraintTop_toBottomOf="@id/cardWarning">
+
+                <ProgressBar
+                    android:id="@+id/progressDashboard"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardErrorState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:id="@+id/tvErrorTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dashboard_error_title"
+                            android:textColor="#222222"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvErrorMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/dashboard_error_message_default"
+                            android:textColor="#666666"
+                            android:textSize="13sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnRetryDashboard"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="16dp"
+                            android:text="@string/dashboard_retry_button"
+                            android:textAllCaps="false"
+                            android:textColor="#20B273"
+                            app:backgroundTint="#E8F5E9"
+                            app:cornerRadius="12dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tvEmptyState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingVertical="24dp"
+                    android:text="@string/dashboard_empty_search"
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvTempatSampah"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/item_tempat_sampah" />
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

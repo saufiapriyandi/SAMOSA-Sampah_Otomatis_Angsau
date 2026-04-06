@@ -1,15 +1,20 @@
 package com.example.sdn4angsau.samosa
 
+import android.Manifest
 import android.content.Intent
-import android.graphics.Color
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sdn4angsau.samosa.databinding.ActivityDashboardBinding
@@ -17,6 +22,23 @@ import com.example.sdn4angsau.samosa.databinding.ActivityDashboardBinding
 class DashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardBinding
+    private lateinit var sampahAdapter: TempatSampahAdapter
+
+    private val viewModel: DashboardViewModel by viewModels {
+        DashboardViewModel.Factory(MockTempatSampahRepository())
+    }
+
+    private var lastHandledDataVersion: Long = 0L
+    private var latestBinsForNotification: List<TempatSampah> = emptyList()
+    private var hasRequestedNotificationPermission = false
+
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            TempatSampahNotificationHelper.syncNotifications(this, latestBinsForNotification)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,17 +80,7 @@ class DashboardActivity : AppCompatActivity() {
             }
         })
 
-        // --- DAFTAR DATA SAMPAH ---
-        val dataContoh = listOf(
-            TempatSampah("3", "Laboratorium", 100),
-            TempatSampah("4", "Ruang Kantor", 95),
-            TempatSampah("5", "Kantin SDN 4", 78),
-            TempatSampah("1", "Perpustakaan", 45),
-            TempatSampah("2", "Ruang Guru", 12)
-        )
-
-        val sampahAdapter = TempatSampahAdapter(dataContoh)
-
+        sampahAdapter = TempatSampahAdapter(::openDetail)
         binding.rvTempatSampah.layoutManager = LinearLayoutManager(this)
         binding.rvTempatSampah.adapter = sampahAdapter
 
@@ -78,18 +90,120 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // PENCARIAN
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        binding.btnRetryDashboard.setOnClickListener {
+            viewModel.loadData()
+        }
 
-            override fun afterTextChanged(s: Editable?) {
-                val keyword = s.toString().lowercase()
-                val hasilFilter = dataContoh.filter {
-                    it.lokasi.lowercase().contains(keyword)
-                }
-                sampahAdapter.updateData(hasilFilter)
+        binding.etSearch.doAfterTextChanged { editable ->
+            viewModel.updateSearchQuery(editable?.toString().orEmpty())
+        }
+
+        observeUiState()
+    }
+
+    private fun observeUiState() {
+        viewModel.uiState.observe(this) { state ->
+            binding.progressDashboard.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+
+            binding.cardErrorState.visibility = if (state.errorMessage != null) View.VISIBLE else View.GONE
+            binding.tvErrorMessage.text = state.errorMessage ?: getString(R.string.dashboard_error_message_default)
+
+            binding.tvSummaryTotalValue.text = state.totalCount.toString()
+            binding.tvSummaryFullValue.text = state.fullCount.toString()
+            binding.tvSummarySafeValue.text = state.safeCount.toString()
+
+            binding.tvLastUpdate.text = if (state.lastUpdatedLabel.isBlank()) {
+                getString(R.string.dashboard_update_placeholder)
+            } else {
+                getString(R.string.dashboard_update_format, state.lastUpdatedLabel)
             }
-        })
+
+            binding.cardWarning.visibility =
+                if (!state.isLoading && state.errorMessage == null && state.showWarning) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+            binding.tvWarningTitle.text = getString(R.string.dashboard_warning_title)
+            binding.tvWarningMessage.text = buildWarningMessage(state.warningBins)
+
+            binding.tvEmptyState.visibility =
+                if (state.showEmptyState && state.errorMessage == null && !state.isLoading) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+
+            binding.rvTempatSampah.visibility =
+                if (state.errorMessage == null && !state.isLoading && state.visibleBins.isNotEmpty()) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+
+            sampahAdapter.submitList(state.visibleBins)
+
+            latestBinsForNotification = state.allBins
+            if (state.dataVersion != 0L && state.dataVersion != lastHandledDataVersion) {
+                lastHandledDataVersion = state.dataVersion
+                handleNotifications(state.allBins)
+            }
+        }
+    }
+
+    private fun handleNotifications(bins: List<TempatSampah>) {
+        if (bins.isEmpty()) return
+
+        val hasFullBins = bins.any { it.isFull }
+        if (!hasFullBins) {
+            TempatSampahNotificationHelper.syncNotifications(this, bins)
+            return
+        }
+
+        val notificationPermissionGranted =
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+
+        if (!notificationPermissionGranted) {
+            if (!hasRequestedNotificationPermission) {
+                hasRequestedNotificationPermission = true
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+            return
+        }
+
+        TempatSampahNotificationHelper.syncNotifications(this, bins)
+    }
+
+    private fun buildWarningMessage(fullBins: List<TempatSampah>): String {
+        if (fullBins.isEmpty()) {
+            return getString(R.string.dashboard_warning_placeholder)
+        }
+
+        return if (fullBins.size == 1) {
+            getString(
+                R.string.dashboard_warning_message_single,
+                fullBins.first().lokasi,
+                fullBins.first().persentase
+            )
+        } else {
+            getString(
+                R.string.dashboard_warning_message_multiple,
+                fullBins.size,
+                fullBins.first().lokasi
+            )
+        }
+    }
+
+    private fun openDetail(item: TempatSampah) {
+        val intent = Intent(this, DetailActivity::class.java).apply {
+            putExtra("EXTRA_LOKASI", item.lokasi)
+            putExtra("EXTRA_BINID", item.binId)
+            putExtra("EXTRA_PERSENTASE", item.persentase)
+        }
+        startActivity(intent)
     }
 }
