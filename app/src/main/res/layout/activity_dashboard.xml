@@ -256,22 +256,21 @@
                     android:textStyle="bold"
                     android:textColor="#222222" />
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRefreshDashboard"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#1A20B273"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="0dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/dashboard_monitor_chip"
-                        android:textColor="#20B273"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="6dp"/>
-                </androidx.cardview.widget.CardView>
+                    android:layout_height="40dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:text="@string/dashboard_refresh_button"
+                    android:textAllCaps="false"
+                    android:textColor="@color/green_dark"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/green_surface"
+                    app:cornerRadius="10dp"
+                    app:strokeColor="@color/green_outline"
+                    app:strokeWidth="1dp" />
             </LinearLayout>
 
             <androidx.cardview.widget.CardView
@@ -347,6 +346,42 @@
                 android:paddingBottom="32dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cardWarning">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardDataStale"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone"
+                    app:cardBackgroundColor="#FFF4E5"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dashboard_warning_symbol"
+                            android:textColor="#C67A00"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvDataStaleMessage"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:text="@string/dashboard_stale_placeholder"
+                            android:textColor="#8A5A00"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
                 <ProgressBar
                     android:id="@+id/progressDashboard"

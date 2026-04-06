@@ -18,12 +18,30 @@
             android:exported="false" />
 
         <activity
+            android:name=".ReportActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".BinManagementActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".TutorialActivity"
             android:exported="false" />
 
         <receiver
             android:name=".TempatSampahReminderReceiver"
             android:exported="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <activity
             android:name=".ProfileActivity"

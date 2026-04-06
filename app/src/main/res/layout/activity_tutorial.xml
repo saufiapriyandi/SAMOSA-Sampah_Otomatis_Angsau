@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7F9"
+    android:background="@color/bg_light"
     android:fillViewport="true"
     tools:context=".TutorialActivity">
 
@@ -17,7 +17,7 @@
             android:id="@+id/bgHeader"
             android:layout_width="match_parent"
             android:layout_height="220dp"
-            android:background="#20B273"
+            android:background="@color/green_primary"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -34,13 +34,13 @@
             android:src="@drawable/ic_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="#FFFFFF" />
+            app:tint="@color/white" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tutorial_title"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/btnBackTutorial"
@@ -56,7 +56,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
             android:text="@string/tutorial_heading"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="28sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -75,7 +75,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#FFFFFF"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp">
 
@@ -85,7 +85,7 @@
                     android:lineSpacingExtra="2dp"
                     android:padding="16dp"
                     android:text="@string/tutorial_intro"
-                    android:textColor="#2E2E2E"
+                    android:textColor="@color/text_dark"
                     android:textSize="14sp" />
             </androidx.cardview.widget.CardView>
 
@@ -93,7 +93,49 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                app:cardBackgroundColor="#FFFFFF"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tutorial_section_updates"
+                        android:textColor="@color/text_dark"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/tutorial_updates_hint"
+                        android:textColor="@color/green_dark"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/tutorial_updates_points"
+                        android:textColor="@color/text_dark"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp">
 
@@ -112,7 +154,7 @@
                         <androidx.cardview.widget.CardView
                             android:layout_width="38dp"
                             android:layout_height="38dp"
-                            app:cardBackgroundColor="#E8F5E9"
+                            app:cardBackgroundColor="@color/green_surface"
                             app:cardCornerRadius="11dp"
                             app:cardElevation="0dp">
 
@@ -122,7 +164,7 @@
                                 android:layout_gravity="center"
                                 android:contentDescription="@string/cd_tutorial_monitor_icon"
                                 android:src="@drawable/ic_monitor"
-                                app:tint="#20B273" />
+                                app:tint="@color/green_dark" />
                         </androidx.cardview.widget.CardView>
 
                         <TextView
@@ -130,7 +172,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:text="@string/tutorial_section_dashboard"
-                            android:textColor="#222222"
+                            android:textColor="@color/text_dark"
                             android:textSize="17sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -145,7 +187,7 @@
                         <androidx.cardview.widget.CardView
                             android:layout_width="12dp"
                             android:layout_height="12dp"
-                            app:cardBackgroundColor="#20B273"
+                            app:cardBackgroundColor="@color/green_primary"
                             app:cardCornerRadius="6dp"
                             app:cardElevation="0dp" />
 
@@ -153,7 +195,7 @@
                             android:layout_width="12dp"
                             android:layout_height="12dp"
                             android:layout_marginStart="8dp"
-                            app:cardBackgroundColor="#FFA500"
+                            app:cardBackgroundColor="@color/orange_warning"
                             app:cardCornerRadius="6dp"
                             app:cardElevation="0dp" />
 
@@ -161,7 +203,7 @@
                             android:layout_width="12dp"
                             android:layout_height="12dp"
                             android:layout_marginStart="8dp"
-                            app:cardBackgroundColor="#FF4B4B"
+                            app:cardBackgroundColor="@color/red_warning"
                             app:cardCornerRadius="6dp"
                             app:cardElevation="0dp" />
 
@@ -170,7 +212,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:text="@string/tutorial_dashboard_hint"
-                            android:textColor="#3F3F3F"
+                            android:textColor="@color/green_dark"
                             android:textSize="12sp" />
                     </LinearLayout>
 
@@ -180,7 +222,7 @@
                         android:layout_marginTop="12dp"
                         android:lineSpacingExtra="2dp"
                         android:text="@string/tutorial_dashboard_points"
-                        android:textColor="#404040"
+                        android:textColor="@color/text_dark"
                         android:textSize="14sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -189,7 +231,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                app:cardBackgroundColor="#FFFFFF"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp">
 
@@ -208,7 +250,7 @@
                         <androidx.cardview.widget.CardView
                             android:layout_width="38dp"
                             android:layout_height="38dp"
-                            app:cardBackgroundColor="#EAF3FF"
+                            app:cardBackgroundColor="@color/green_surface"
                             app:cardCornerRadius="11dp"
                             app:cardElevation="0dp">
 
@@ -217,8 +259,8 @@
                                 android:layout_height="18dp"
                                 android:layout_gravity="center"
                                 android:contentDescription="@string/cd_tutorial_bin_icon"
-                                android:src="@drawable/baksampahicon"
-                                app:tint="#1F7AE0" />
+                                android:src="@drawable/ic_trash"
+                                app:tint="@color/green_dark" />
                         </androidx.cardview.widget.CardView>
 
                         <TextView
@@ -226,7 +268,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:text="@string/tutorial_section_detail"
-                            android:textColor="#222222"
+                            android:textColor="@color/text_dark"
                             android:textSize="17sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -241,32 +283,32 @@
                         <View
                             android:layout_width="8dp"
                             android:layout_height="12dp"
-                            android:background="#20B273" />
+                            android:background="@color/green_primary" />
 
                         <View
                             android:layout_width="8dp"
                             android:layout_height="18dp"
                             android:layout_marginStart="6dp"
-                            android:background="#20B273" />
+                            android:background="@color/green_primary" />
 
                         <View
                             android:layout_width="8dp"
                             android:layout_height="24dp"
                             android:layout_marginStart="6dp"
-                            android:background="#FFA500" />
+                            android:background="@color/orange_warning" />
 
                         <View
                             android:layout_width="8dp"
                             android:layout_height="30dp"
                             android:layout_marginStart="6dp"
-                            android:background="#FF4B4B" />
+                            android:background="@color/red_warning" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:text="@string/tutorial_detail_hint"
-                            android:textColor="#3F3F3F"
+                            android:textColor="@color/green_dark"
                             android:textSize="12sp" />
                     </LinearLayout>
 
@@ -276,7 +318,7 @@
                         android:layout_marginTop="12dp"
                         android:lineSpacingExtra="2dp"
                         android:text="@string/tutorial_detail_points"
-                        android:textColor="#404040"
+                        android:textColor="@color/text_dark"
                         android:textSize="14sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -285,7 +327,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                app:cardBackgroundColor="#FFFFFF"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp">
 
@@ -304,7 +346,7 @@
                         <androidx.cardview.widget.CardView
                             android:layout_width="38dp"
                             android:layout_height="38dp"
-                            app:cardBackgroundColor="#FFF3DF"
+                            app:cardBackgroundColor="@color/orange_surface"
                             app:cardCornerRadius="11dp"
                             app:cardElevation="0dp">
 
@@ -313,7 +355,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/tutorial_warning_symbol"
-                                android:textColor="#FFA500"
+                                android:textColor="@color/orange_warning"
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
                         </androidx.cardview.widget.CardView>
@@ -323,7 +365,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:text="@string/tutorial_section_status"
-                            android:textColor="#222222"
+                            android:textColor="@color/text_dark"
                             android:textSize="17sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -343,7 +385,7 @@
                             <androidx.cardview.widget.CardView
                                 android:layout_width="10dp"
                                 android:layout_height="10dp"
-                                app:cardBackgroundColor="#20B273"
+                                app:cardBackgroundColor="@color/green_primary"
                                 app:cardCornerRadius="5dp"
                                 app:cardElevation="0dp" />
 
@@ -352,7 +394,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:text="@string/tutorial_status_green"
-                                android:textColor="#2F2F2F"
+                                android:textColor="@color/text_dark"
                                 android:textSize="14sp" />
                         </LinearLayout>
 
@@ -366,7 +408,7 @@
                             <androidx.cardview.widget.CardView
                                 android:layout_width="10dp"
                                 android:layout_height="10dp"
-                                app:cardBackgroundColor="#FFA500"
+                                app:cardBackgroundColor="@color/orange_warning"
                                 app:cardCornerRadius="5dp"
                                 app:cardElevation="0dp" />
 
@@ -375,7 +417,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:text="@string/tutorial_status_orange"
-                                android:textColor="#2F2F2F"
+                                android:textColor="@color/text_dark"
                                 android:textSize="14sp" />
                         </LinearLayout>
 
@@ -389,7 +431,7 @@
                             <androidx.cardview.widget.CardView
                                 android:layout_width="10dp"
                                 android:layout_height="10dp"
-                                app:cardBackgroundColor="#FF4B4B"
+                                app:cardBackgroundColor="@color/red_warning"
                                 app:cardCornerRadius="5dp"
                                 app:cardElevation="0dp" />
 
@@ -398,10 +440,94 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:text="@string/tutorial_status_red"
-                                android:textColor="#2F2F2F"
+                                android:textColor="@color/text_dark"
                                 android:textSize="14sp" />
                         </LinearLayout>
                     </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tutorial_section_management"
+                        android:textColor="@color/text_dark"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/tutorial_management_hint"
+                        android:textColor="@color/green_dark"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/tutorial_management_points"
+                        android:textColor="@color/text_dark"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tutorial_section_report"
+                        android:textColor="@color/text_dark"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/tutorial_report_hint"
+                        android:textColor="@color/green_dark"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/tutorial_report_points"
+                        android:textColor="@color/text_dark"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -412,10 +538,10 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/tutorial_close_button"
                 android:textAllCaps="false"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:backgroundTint="#20B273"
+                app:backgroundTint="@color/green_primary"
                 app:cornerRadius="14dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

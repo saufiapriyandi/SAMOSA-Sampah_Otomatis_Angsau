@@ -35,6 +35,14 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, TutorialActivity::class.java))
         }
 
+        binding.btnManageBinsProfile.setOnClickListener {
+            startActivity(Intent(this, BinManagementActivity::class.java))
+        }
+
+        binding.btnReportProfile.setOnClickListener {
+            startActivity(Intent(this, ReportActivity::class.java))
+        }
+
         // FUNGSI TOMBOL LOGOUT
         binding.btnLogoutProfile.setOnClickListener {
             // 1. Hapus sesi di Firebase

@@ -16,6 +16,11 @@ import com.google.firebase.auth.GoogleAuthProvider
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        private const val VALID_USERNAME = "admin123"
+        private const val VALID_PASSWORD = "admin123"
+    }
+
     private lateinit var binding: ActivityMainBinding
 
     // Variabel untuk Firebase dan Google Sign-In
@@ -56,16 +61,22 @@ class MainActivity : AppCompatActivity() {
         // LOGIKA TOMBOL MASUK BIASA (TOMBOL HIJAU)
         // ==========================================
         binding.btnLogin.setOnClickListener {
-            val username = binding.etUsername.text.toString()
-            val password = binding.etPassword.text.toString()
+            val username = binding.etUsername.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
 
-            // Cek apakah kolom kosong atau tidak
-            if (username.isNotEmpty() && password.isNotEmpty()) {
-                // Simpan ingatan bahwa user sudah berhasil login manual
+            val errorMessage = when {
+                username.isEmpty() || password.isEmpty() -> getString(R.string.login_error_empty_fields)
+                username != VALID_USERNAME && password != VALID_PASSWORD -> getString(R.string.login_error_wrong_credentials)
+                username != VALID_USERNAME -> getString(R.string.login_error_wrong_username)
+                password != VALID_PASSWORD -> getString(R.string.login_error_wrong_password)
+                else -> null
+            }
+
+            if (errorMessage != null) {
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+            } else {
                 sharedPref.edit().putBoolean("SUDAH_LOGIN", true).apply()
                 pindahKeDashboard()
-            } else {
-                Toast.makeText(this, "Username dan Password tidak boleh kosong!", Toast.LENGTH_SHORT).show()
             }
         }
 

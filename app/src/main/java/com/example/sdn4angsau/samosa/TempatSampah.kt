@@ -9,7 +9,8 @@ enum class TempatSampahStatus {
 data class TempatSampah(
     val binId: String,
     val lokasi: String,
-    val persentase: Int
+    val persentase: Int,
+    val isActive: Boolean = true
 ) {
     val status: TempatSampahStatus
         get() = when {

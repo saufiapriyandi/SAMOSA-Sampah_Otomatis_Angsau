@@ -29,8 +29,9 @@ object TempatSampahNotificationHelper {
     fun syncNotifications(context: Context, bins: List<TempatSampah>) {
         ensureNotificationChannel(context)
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val activeBins = bins.filter { it.isActive }
 
-        bins.filterNot { it.isFull }.forEach { bin ->
+        bins.filter { !it.isActive || !it.isFull }.forEach { bin ->
             cancelReminder(context, bin.binId)
             NotificationManagerCompat.from(context).cancel(notificationId(bin.binId))
             prefs.edit {
@@ -44,7 +45,7 @@ object TempatSampahNotificationHelper {
 
         val now = System.currentTimeMillis()
 
-        bins.filter { it.isFull }.forEach { bin ->
+        activeBins.filter { it.isFull }.forEach { bin ->
             val key = "$KEY_PREFIX_LAST_ALERT${bin.binId}"
             val lastAlert = prefs.getLong(key, 0L)
 

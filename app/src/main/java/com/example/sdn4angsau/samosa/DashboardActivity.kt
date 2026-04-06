@@ -23,9 +23,10 @@ class DashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardBinding
     private lateinit var sampahAdapter: TempatSampahAdapter
+    private var hasResumedOnce = false
 
     private val viewModel: DashboardViewModel by viewModels {
-        DashboardViewModel.Factory(MockTempatSampahRepository())
+        DashboardViewModel.Factory(MockTempatSampahRepository(applicationContext))
     }
 
     private var lastHandledDataVersion: Long = 0L
@@ -94,6 +95,10 @@ class DashboardActivity : AppCompatActivity() {
             viewModel.loadData()
         }
 
+        binding.btnRefreshDashboard.setOnClickListener {
+            viewModel.loadData()
+        }
+
         binding.etSearch.doAfterTextChanged { editable ->
             viewModel.updateSearchQuery(editable?.toString().orEmpty())
         }
@@ -101,9 +106,20 @@ class DashboardActivity : AppCompatActivity() {
         observeUiState()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (hasResumedOnce) {
+            viewModel.loadData()
+        } else {
+            hasResumedOnce = true
+        }
+    }
+
     private fun observeUiState() {
         viewModel.uiState.observe(this) { state ->
             binding.progressDashboard.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+            binding.btnRefreshDashboard.isEnabled = !state.isLoading
 
             binding.cardErrorState.visibility = if (state.errorMessage != null) View.VISIBLE else View.GONE
             binding.tvErrorMessage.text = state.errorMessage ?: getString(R.string.dashboard_error_message_default)
@@ -127,12 +143,31 @@ class DashboardActivity : AppCompatActivity() {
             binding.tvWarningTitle.text = getString(R.string.dashboard_warning_title)
             binding.tvWarningMessage.text = buildWarningMessage(state.warningBins)
 
-            binding.tvEmptyState.visibility =
-                if (state.showEmptyState && state.errorMessage == null && !state.isLoading) {
+            binding.cardDataStale.visibility =
+                if (!state.isLoading && state.errorMessage == null && state.isDataStale) {
                     View.VISIBLE
                 } else {
                     View.GONE
                 }
+            binding.tvDataStaleMessage.text =
+                getString(R.string.dashboard_stale_message, state.staleMinutes)
+
+            binding.tvEmptyState.text = when (state.emptyState) {
+                DashboardEmptyState.NO_ACTIVE_BINS ->
+                    getString(R.string.dashboard_empty_no_active_bins)
+                DashboardEmptyState.SEARCH_NO_RESULT ->
+                    getString(R.string.dashboard_empty_search)
+                DashboardEmptyState.NONE -> ""
+            }
+            binding.tvEmptyState.visibility = if (
+                state.emptyState != DashboardEmptyState.NONE &&
+                state.errorMessage == null &&
+                !state.isLoading
+            ) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
 
             binding.rvTempatSampah.visibility =
                 if (state.errorMessage == null && !state.isLoading && state.visibleBins.isNotEmpty()) {
@@ -143,7 +178,7 @@ class DashboardActivity : AppCompatActivity() {
 
             sampahAdapter.submitList(state.visibleBins)
 
-            latestBinsForNotification = state.allBins
+            latestBinsForNotification = TempatSampahLocalStore.getAll(this)
             if (state.dataVersion != 0L && state.dataVersion != lastHandledDataVersion) {
                 lastHandledDataVersion = state.dataVersion
                 handleNotifications(state.allBins)
@@ -152,11 +187,12 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun handleNotifications(bins: List<TempatSampah>) {
-        if (bins.isEmpty()) return
+        val configuredBins = TempatSampahLocalStore.getAll(this)
+        if (configuredBins.isEmpty()) return
 
         val hasFullBins = bins.any { it.isFull }
         if (!hasFullBins) {
-            TempatSampahNotificationHelper.syncNotifications(this, bins)
+            TempatSampahNotificationHelper.syncNotifications(this, configuredBins)
             return
         }
 
@@ -175,7 +211,7 @@ class DashboardActivity : AppCompatActivity() {
             return
         }
 
-        TempatSampahNotificationHelper.syncNotifications(this, bins)
+        TempatSampahNotificationHelper.syncNotifications(this, configuredBins)
     }
 
     private fun buildWarningMessage(fullBins: List<TempatSampah>): String {

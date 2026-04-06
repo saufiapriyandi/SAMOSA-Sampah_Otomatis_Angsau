@@ -30,38 +30,46 @@ class DetailActivity : AppCompatActivity() {
         val tanggalSekarang = dateFormat.format(calendar.time)
         binding.tvTanggal.text = tanggalSekarang
 
-        val hariIniAsli = calendar.get(Calendar.DAY_OF_WEEK)
+        val currentDayIndex = TempatSampahHistoryHelper.getCurrentSchoolDayIndex(calendar)
 
         val namaLokasi = intent.getStringExtra("EXTRA_LOKASI") ?: getString(R.string.detail_unknown_location)
         val binId = intent.getStringExtra("EXTRA_BINID") ?: "-"
         val persentaseAsliKini = intent.getIntExtra("EXTRA_PERSENTASE", 0)
+        val bin = TempatSampah(
+            binId = binId,
+            lokasi = namaLokasi,
+            persentase = persentaseAsliKini,
+            isActive = true
+        )
 
         binding.tvDetailLokasi.text = namaLokasi
         binding.tvDetailBinId.text = getString(R.string.detail_bin_id_format, binId)
 
-        val dataSenin = listOf(0, 15, 30, 45, 50)
-        val dataSelasa = listOf(10, 40, 70, 95, 100)
-        val dataRabu = listOf(5, 20, 35, 55, 60)
-        val dataKamis = listOf(10, 35, 65, 85, persentaseAsliKini)
-        val dataJumat = listOf(0, 5, 15, 25, 40)
-
-        val kumpulanData = listOf(dataSenin, dataSelasa, dataRabu, dataKamis, dataJumat)
+        val kumpulanData = List(5) { dayIndex ->
+            TempatSampahHistoryHelper.getDailyPercentages(
+                bin = bin,
+                dayIndex = dayIndex,
+                includeCurrentReading = true
+            )
+        }
         val buttons = listOf(binding.btnSenin, binding.btnSelasa, binding.btnRabu, binding.btnKamis, binding.btnJumat)
         val texts = listOf(binding.tvSenin, binding.tvSelasa, binding.tvRabu, binding.tvKamis, binding.tvJumat)
 
-        updateSemuaGrafik(dataKamis, isHariIni = (hariIniAsli == Calendar.THURSDAY))
+        buttons[currentDayIndex].setCardBackgroundColor(colorSelected)
+        texts[currentDayIndex].setTextColor(colorWhite)
+        updateSemuaGrafik(kumpulanData[currentDayIndex], isHariIni = true)
 
         for (i in buttons.indices) {
             buttons[i].setOnClickListener {
                 for (j in buttons.indices) {
-                    buttons[j].setCardBackgroundColor(Color.parseColor("#F5F7F9"))
-                    texts[j].setTextColor(Color.parseColor("#888888"))
+                    buttons[j].setCardBackgroundColor(colorBackground)
+                    texts[j].setTextColor(colorMutedText)
                 }
 
-                buttons[i].setCardBackgroundColor(Color.parseColor("#20B273"))
-                texts[i].setTextColor(Color.parseColor("#FFFFFF"))
+                buttons[i].setCardBackgroundColor(colorSelected)
+                texts[i].setTextColor(colorWhite)
 
-                val apakahHariIni = (i + 2) == hariIniAsli
+                val apakahHariIni = i == currentDayIndex
                 updateSemuaGrafik(kumpulanData[i], apakahHariIni)
             }
         }
@@ -97,18 +105,28 @@ class DetailActivity : AppCompatActivity() {
     private fun aturBalok(tvVal: TextView, barCard: CardView, persentase: Int) {
         tvVal.text = "$persentase%"
 
-        val colorHex = when {
-            persentase >= 90 -> "#FF4B4B"
-            persentase >= 60 -> "#FFA500"
-            else -> "#20B273"
+        val colorInt = when {
+            persentase >= 90 -> colorFull
+            persentase >= 60 -> colorWarning
+            else -> colorSafe
         }
-        tvVal.setTextColor(Color.parseColor(colorHex))
-        barCard.setCardBackgroundColor(Color.parseColor(colorHex))
+        tvVal.setTextColor(colorInt)
+        barCard.setCardBackgroundColor(colorInt)
 
         val tinggiGrafik = if (persentase < 10) 10 else persentase
         val layoutParams = barCard.layoutParams
         val density = resources.displayMetrics.density
         layoutParams.height = (tinggiGrafik * density).toInt()
         barCard.layoutParams = layoutParams
+    }
+
+    companion object {
+        private val colorBackground = Color.parseColor("#F5F7F9")
+        private val colorMutedText = Color.parseColor("#888888")
+        private val colorSelected = Color.parseColor("#20B273")
+        private val colorWhite = Color.parseColor("#FFFFFF")
+        private val colorSafe = Color.parseColor("#20B273")
+        private val colorWarning = Color.parseColor("#FFA500")
+        private val colorFull = Color.parseColor("#FF4B4B")
     }
 }

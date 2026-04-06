@@ -27,29 +27,17 @@ class TempatSampahAdapter(
             tvLokasi.text = item.lokasi
             tvBinId.text = context.getString(R.string.dashboard_bin_id_format, item.binId)
             tvPersentase.text = "${item.persentase}%"
+            val uiColors = colorsForStatus(item.status)
 
-            when (item.status) {
-                TempatSampahStatus.PENUH -> {
-                    tvPersentase.setTextColor(Color.parseColor("#FF4B4B"))
-                    tvStatusPesan.text = context.getString(R.string.dashboard_status_full)
-                    tvStatusPesan.setTextColor(Color.parseColor("#FF4B4B"))
-                    cardStatusPesan.setCardBackgroundColor(Color.parseColor("#1AFF4B4B"))
-                    bgIconSampah.setCardBackgroundColor(Color.parseColor("#FF4B4B"))
-                }
-                TempatSampahStatus.WASPADA -> {
-                    tvPersentase.setTextColor(Color.parseColor("#FFA500"))
-                    tvStatusPesan.text = context.getString(R.string.dashboard_status_warning)
-                    tvStatusPesan.setTextColor(Color.parseColor("#FFA500"))
-                    cardStatusPesan.setCardBackgroundColor(Color.parseColor("#1AFFA500"))
-                    bgIconSampah.setCardBackgroundColor(Color.parseColor("#FFA500"))
-                }
-                TempatSampahStatus.AMAN -> {
-                    tvPersentase.setTextColor(Color.parseColor("#20B273"))
-                    tvStatusPesan.text = context.getString(R.string.dashboard_status_safe)
-                    tvStatusPesan.setTextColor(Color.parseColor("#20B273"))
-                    cardStatusPesan.setCardBackgroundColor(Color.parseColor("#1A20B273"))
-                    bgIconSampah.setCardBackgroundColor(Color.parseColor("#20B273"))
-                }
+            tvPersentase.setTextColor(uiColors.accentColor)
+            tvStatusPesan.setTextColor(uiColors.accentColor)
+            cardStatusPesan.setCardBackgroundColor(uiColors.surfaceColor)
+            bgIconSampah.setCardBackgroundColor(uiColors.accentColor)
+
+            tvStatusPesan.text = when (item.status) {
+                TempatSampahStatus.PENUH -> context.getString(R.string.dashboard_status_full)
+                TempatSampahStatus.WASPADA -> context.getString(R.string.dashboard_status_warning)
+                TempatSampahStatus.AMAN -> context.getString(R.string.dashboard_status_safe)
             }
 
             root.setOnClickListener {
@@ -59,6 +47,13 @@ class TempatSampahAdapter(
     }
 
     companion object {
+        private val fullAccent = Color.parseColor("#FF4B4B")
+        private val fullSurface = Color.parseColor("#1AFF4B4B")
+        private val warningAccent = Color.parseColor("#FFA500")
+        private val warningSurface = Color.parseColor("#1AFFA500")
+        private val safeAccent = Color.parseColor("#20B273")
+        private val safeSurface = Color.parseColor("#1A20B273")
+
         private val DiffCallback = object : DiffUtil.ItemCallback<TempatSampah>() {
             override fun areItemsTheSame(oldItem: TempatSampah, newItem: TempatSampah): Boolean {
                 return oldItem.binId == newItem.binId
@@ -68,5 +63,18 @@ class TempatSampahAdapter(
                 return oldItem == newItem
             }
         }
+
+        private fun colorsForStatus(status: TempatSampahStatus): StatusUiColors {
+            return when (status) {
+                TempatSampahStatus.PENUH -> StatusUiColors(fullAccent, fullSurface)
+                TempatSampahStatus.WASPADA -> StatusUiColors(warningAccent, warningSurface)
+                TempatSampahStatus.AMAN -> StatusUiColors(safeAccent, safeSurface)
+            }
+        }
     }
+
+    private data class StatusUiColors(
+        val accentColor: Int,
+        val surfaceColor: Int
+    )
 }

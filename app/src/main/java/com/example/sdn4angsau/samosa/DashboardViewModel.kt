@@ -5,10 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+enum class DashboardEmptyState {
+    NONE,
+    NO_ACTIVE_BINS,
+    SEARCH_NO_RESULT
+}
 
 data class DashboardUiState(
     val isLoading: Boolean = true,
@@ -21,7 +29,9 @@ data class DashboardUiState(
     val showWarning: Boolean = false,
     val warningBins: List<TempatSampah> = emptyList(),
     val lastUpdatedLabel: String = "",
-    val showEmptyState: Boolean = false,
+    val emptyState: DashboardEmptyState = DashboardEmptyState.NONE,
+    val isDataStale: Boolean = false,
+    val staleMinutes: Int = 0,
     val dataVersion: Long = 0L
 )
 
@@ -35,9 +45,12 @@ class DashboardViewModel(
     private var sourceData: List<TempatSampah> = emptyList()
     private var currentQuery: String = ""
     private var lastUpdatedAtMillis: Long = 0L
+    private val staleThresholdMillis = 10 * 60 * 1000L
+    private val freshnessCheckIntervalMillis = 60 * 1000L
 
     init {
         loadData()
+        startFreshnessTicker()
     }
 
     fun loadData() {
@@ -63,11 +76,14 @@ class DashboardViewModel(
     }
 
     fun updateSearchQuery(query: String) {
-        currentQuery = query.trim()
+        val normalizedQuery = query.trim()
+        if (normalizedQuery == currentQuery) return
+
+        currentQuery = normalizedQuery
         publishState()
     }
 
-    private fun publishState() {
+    private fun publishState(nowMillis: Long = System.currentTimeMillis()) {
         val filteredBins = if (currentQuery.isBlank()) {
             sourceData
         } else {
@@ -75,6 +91,17 @@ class DashboardViewModel(
         }
 
         val fullBins = sourceData.filter { it.isFull }
+        val isDataStale = lastUpdatedAtMillis != 0L && (nowMillis - lastUpdatedAtMillis) >= staleThresholdMillis
+        val staleMinutes = if (isDataStale) {
+            (((nowMillis - lastUpdatedAtMillis) / 60000L).toInt()).coerceAtLeast(1)
+        } else {
+            0
+        }
+        val emptyState = when {
+            sourceData.isEmpty() -> DashboardEmptyState.NO_ACTIVE_BINS
+            filteredBins.isEmpty() -> DashboardEmptyState.SEARCH_NO_RESULT
+            else -> DashboardEmptyState.NONE
+        }
 
         _uiState.value = DashboardUiState(
             isLoading = false,
@@ -87,9 +114,22 @@ class DashboardViewModel(
             showWarning = fullBins.isNotEmpty(),
             warningBins = fullBins,
             lastUpdatedLabel = formatLastUpdated(lastUpdatedAtMillis),
-            showEmptyState = sourceData.isNotEmpty() && filteredBins.isEmpty(),
+            emptyState = emptyState,
+            isDataStale = isDataStale,
+            staleMinutes = staleMinutes,
             dataVersion = lastUpdatedAtMillis
         )
+    }
+
+    private fun startFreshnessTicker() {
+        viewModelScope.launch {
+            while (isActive) {
+                delay(freshnessCheckIntervalMillis)
+                if (lastUpdatedAtMillis != 0L) {
+                    publishState()
+                }
+            }
+        }
     }
 
     private fun formatLastUpdated(timestamp: Long): String {
