@@ -1,10 +1,10 @@
 package com.example.sdn4angsau.samosa
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.sdn4angsau.samosa.databinding.ActivityProfileBinding
 
@@ -48,10 +48,10 @@ class ProfileActivity : AppCompatActivity() {
             GoogleSignIn.getClient(this, gso).signOut()
 
             // 3. Hapus ingatan / sesi lokal yang kita buat manual
-            val sharedPref = getSharedPreferences("SesiSamosa", Context.MODE_PRIVATE)
-            val editor = sharedPref.edit()
-            editor.putBoolean("SUDAH_LOGIN", false)
-            editor.apply()
+            val sharedPref = getSharedPreferences("SesiSamosa", MODE_PRIVATE)
+            sharedPref.edit {
+                putBoolean("SUDAH_LOGIN", false)
+            }
 
             // 4. Pindah ke halaman Login (MainActivity) dan HANCURKAN SEMUA RIWAYAT
             val intent = Intent(this, MainActivity::class.java)

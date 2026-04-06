@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">Samosa</string>
+
+    <string name="cd_back">Kembali</string>
+    <string name="cd_profile_icon">Ikon profil</string>
+    <string name="cd_school_icon">Ikon sekolah</string>
+    <string name="cd_tutorial_monitor_icon">Ikon dashboard</string>
+    <string name="cd_tutorial_bin_icon">Ikon tempat sampah</string>
+
+    <string name="profile_title">Profil Pengguna</string>
+    <string name="profile_role">Kepala Sekolah</string>
+    <string name="profile_id">ID: STAF-ANGSAU-001</string>
+    <string name="profile_institution_label">Instansi</string>
+    <string name="profile_institution_name">UPTD SDN 4 Angsau</string>
+    <string name="profile_tutorial_button">Tutorial Penggunaan Aplikasi</string>
+    <string name="profile_logout_button">Keluar Akun</string>
+
+    <string name="tutorial_title">Tutorial Penggunaan</string>
+    <string name="tutorial_heading">Panduan Singkat</string>
+    <string name="tutorial_intro">Lihat warna status di Dashboard, lalu buka Detail lokasi yang perlu ditangani.</string>
+    <string name="tutorial_section_dashboard">Dashboard</string>
+    <string name="tutorial_dashboard_hint">Lihat warna untuk tahu prioritas</string>
+    <string name="tutorial_dashboard_points">- Gunakan kolom cari untuk lokasi tertentu.\n- Cek kartu ringkasan: total, penuh, kosong.\n- Jika merah, segera tindak lanjut.</string>
+    <string name="tutorial_section_detail">Detail Tempat Sampah</string>
+    <string name="tutorial_detail_hint">Grafik naik = sampah bertambah</string>
+    <string name="tutorial_detail_points">- Menampilkan nama lokasi, BIN-ID, dan tanggal.\n- Pilih hari (Sen-Jum) untuk lihat riwayat.\n- Baca log sensor untuk kondisi terakhir.</string>
+    <string name="tutorial_warning_symbol">!</string>
+    <string name="tutorial_section_status">Arti Warna Status</string>
+    <string name="tutorial_status_green">Hijau: aman</string>
+    <string name="tutorial_status_orange">Oranye: mulai penuh, pantau</string>
+    <string name="tutorial_status_red">Merah: penuh, segera kosongkan</string>
+    <string name="tutorial_close_button">Tutup Tutorial</string>
 </resources>

@@ -22,17 +22,18 @@
         android:layout_marginTop="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
+        android:contentDescription="@string/cd_back"
         android:focusable="true"
         android:padding="8dp"
         android:src="@drawable/ic_back"
-        app:tint="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#FFFFFF" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Profil Pengguna"
+        android:text="@string/profile_title"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -70,6 +71,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
+                    android:contentDescription="@string/cd_profile_icon"
                     android:src="@drawable/ic_profile"
                     app:tint="#20B273" />
             </androidx.cardview.widget.CardView>
@@ -77,7 +79,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kepala Sekolah"
+                android:text="@string/profile_role"
                 android:textColor="#222222"
                 android:textSize="22sp"
                 android:textStyle="bold"
@@ -86,7 +88,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ID: STAF-ANGSAU-001"
+                android:text="@string/profile_id"
                 android:textColor="#888888"
                 android:textSize="12sp"
                 android:layout_marginTop="4dp" />
@@ -106,6 +108,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/cd_school_icon"
                     android:src="@drawable/ic_school"
                     app:tint="#AAAAAA"/>
 
@@ -119,14 +122,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Instansi"
+                        android:text="@string/profile_institution_label"
                         android:textColor="#888888"
                         android:textSize="11sp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="UPTD SDN 4 Angsau"
+                        android:text="@string/profile_institution_name"
                         android:textColor="#222222"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -141,7 +144,7 @@
         android:layout_height="56dp"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="24dp"
-        android:text="Tutorial Penggunaan Aplikasi"
+        android:text="@string/profile_tutorial_button"
         android:textAllCaps="false"
         android:textColor="#20B273"
         android:textSize="15sp"
@@ -159,7 +162,7 @@
         android:layout_height="56dp"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="24dp"
-        android:text="Keluar Akun"
+        android:text="@string/profile_logout_button"
         android:textAllCaps="false"
         android:textColor="#FF4B4B"
         android:textSize="16sp"
