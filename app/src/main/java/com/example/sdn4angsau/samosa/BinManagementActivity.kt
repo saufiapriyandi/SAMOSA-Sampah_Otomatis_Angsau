@@ -2,6 +2,7 @@ package com.example.sdn4angsau.samosa
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -13,6 +14,7 @@ import com.example.sdn4angsau.samosa.databinding.ActivityBinManagementBinding
 import com.example.sdn4angsau.samosa.databinding.DialogBinFormBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.Locale
+import kotlin.math.min
 
 class BinManagementActivity : AppCompatActivity() {
 
@@ -75,6 +77,13 @@ class BinManagementActivity : AppCompatActivity() {
 
     private fun showBinFormDialog(existingItem: TempatSampah?) {
         val dialogBinding = DialogBinFormBinding.inflate(layoutInflater)
+        val dialogTitle = if (existingItem == null) {
+            getString(R.string.management_dialog_add_title)
+        } else {
+            getString(R.string.management_dialog_edit_title, existingItem.lokasi)
+        }
+
+        dialogBinding.tvBinFormTitle.text = dialogTitle
 
         if (existingItem != null) {
             dialogBinding.etLokasiBinForm.setText(existingItem.lokasi)
@@ -86,19 +95,19 @@ class BinManagementActivity : AppCompatActivity() {
         }
 
         val dialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_SAMOSA_MaterialAlertDialog)
-            .setTitle(
-                if (existingItem == null) {
-                    getString(R.string.management_dialog_add_title)
-                } else {
-                    getString(R.string.management_dialog_edit_title, existingItem.lokasi)
-                }
-            )
             .setView(dialogBinding.root)
             .setNegativeButton(R.string.management_cancel_button, null)
             .setPositiveButton(R.string.management_save_button, null)
             .create()
 
         dialog.setOnShowListener {
+            val dialogWidth = min(
+                (resources.displayMetrics.widthPixels * 0.8f).toInt(),
+                (332 * resources.displayMetrics.density).toInt()
+            )
+
+            dialog.window?.setBackgroundDrawableResource(R.drawable.bg_dialog_white)
+            dialog.window?.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
                 .setTextColor(ContextCompat.getColor(this, R.color.text_gray))
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)

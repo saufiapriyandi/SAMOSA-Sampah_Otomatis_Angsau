@@ -1,6 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.SAMOSASampahOtomatisAngsau" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.SAMOSASampahOtomatisAngsau" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/green_primary</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorPrimaryContainer">@color/green_surface</item>
@@ -15,10 +15,25 @@
         <item name="colorSurfaceVariant">@color/bg_light</item>
         <item name="colorOutline">@color/green_outline</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:forceDarkAllowed">false</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.SAMOSA.MaterialAlertDialog</item>
     </style>
 
     <style name="Theme.SAMOSASampahOtomatisAngsau" parent="Base.Theme.SAMOSASampahOtomatisAngsau" />
+
+    <style name="Theme.SAMOSASampahOtomatisAngsau.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+
+        <item name="postSplashScreenTheme">@style/Theme.SAMOSASampahOtomatisAngsau</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:forceDarkAllowed">false</item>
+    </style>
 
     <style name="ThemeOverlay.SAMOSA.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorPrimary">@color/green_primary</item>

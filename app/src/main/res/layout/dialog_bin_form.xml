@@ -3,14 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:paddingHorizontal="24dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="24dp">
+
+        <TextView
+            android:id="@+id/tvBinFormTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:textColor="@color/text_dark"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilLokasiBinForm"
@@ -19,10 +30,10 @@
             android:layout_height="wrap_content"
             android:hint="@string/management_field_location"
             app:boxBackgroundColor="@color/white"
-            app:boxCornerRadiusTopStart="14dp"
-            app:boxCornerRadiusTopEnd="14dp"
-            app:boxCornerRadiusBottomStart="14dp"
-            app:boxCornerRadiusBottomEnd="14dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
             app:boxStrokeColor="@color/green_primary"
             app:hintTextColor="@color/text_gray"
             app:placeholderText="@string/management_field_location_hint">
@@ -31,8 +42,9 @@
                 android:id="@+id/etLokasiBinForm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="56dp"
                 android:inputType="textCapWords"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:textColor="@color/text_dark"
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -42,13 +54,13 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="12dp"
             android:hint="@string/management_field_bin_id"
             app:boxBackgroundColor="@color/white"
-            app:boxCornerRadiusTopStart="14dp"
-            app:boxCornerRadiusTopEnd="14dp"
-            app:boxCornerRadiusBottomStart="14dp"
-            app:boxCornerRadiusBottomEnd="14dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
             app:boxStrokeColor="@color/green_primary"
             app:hintTextColor="@color/text_gray"
             app:placeholderText="@string/management_field_bin_id_hint">
@@ -57,8 +69,9 @@
                 android:id="@+id/etBinIdBinForm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="56dp"
                 android:inputType="textCapCharacters"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:textColor="@color/text_dark"
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -68,13 +81,13 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="12dp"
             android:hint="@string/management_field_percentage"
             app:boxBackgroundColor="@color/white"
-            app:boxCornerRadiusTopStart="14dp"
-            app:boxCornerRadiusTopEnd="14dp"
-            app:boxCornerRadiusBottomStart="14dp"
-            app:boxCornerRadiusBottomEnd="14dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
             app:boxStrokeColor="@color/green_primary"
             app:hintTextColor="@color/text_gray"
             app:placeholderText="@string/management_field_percentage_hint">
@@ -83,8 +96,9 @@
                 android:id="@+id/etPersentaseBinForm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="56dp"
                 android:inputType="number"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
                 android:textColor="@color/text_dark"
                 android:textSize="14sp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -92,15 +106,15 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             app:cardBackgroundColor="@color/green_surface_soft"
-            app:cardCornerRadius="14dp"
+            app:cardCornerRadius="12dp"
             app:cardElevation="0dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="14dp"
+                android:padding="12dp"
                 android:text="@string/management_field_note"
                 android:textColor="@color/text_gray"
                 android:textSize="12sp" />
@@ -109,9 +123,9 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="12dp"
             app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="12dp"
             app:cardElevation="0dp">
 
             <LinearLayout
@@ -119,14 +133,14 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="2dp">
+                android:paddingVertical="8dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:padding="12dp">
+                    android:paddingEnd="12dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -139,17 +153,16 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
                         android:text="@string/management_active_subtitle"
                         android:textColor="@color/text_gray"
-                        android:textSize="12sp" />
+                        android:textSize="11sp" />
                 </LinearLayout>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switchAktifBinForm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
                     android:showText="false"
                     android:text=""
                     app:useMaterialThemeColors="true" />

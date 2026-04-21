@@ -6,7 +6,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updatePadding
 import com.example.sdn4angsau.samosa.databinding.ActivityDetailBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -22,6 +25,17 @@ class DetailActivity : AppCompatActivity() {
 
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val extraTopPadding = (12 * resources.displayMetrics.density).toInt()
+            val extraBottomPadding = (24 * resources.displayMetrics.density).toInt()
+
+            binding.headerDetailBar.updatePadding(top = systemBars.top + extraTopPadding)
+            binding.scrollDetail.updatePadding(bottom = systemBars.bottom + extraBottomPadding)
+
+            insets
+        }
 
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 

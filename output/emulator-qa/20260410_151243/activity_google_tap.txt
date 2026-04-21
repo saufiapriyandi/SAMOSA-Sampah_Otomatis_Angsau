@@ -1,0 +1,1 @@
+    topResumedActivity=ActivityRecord{165262447 u0 com.google.android.gms/.common.account.AccountPickerActivity t64}

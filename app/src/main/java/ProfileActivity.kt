@@ -5,7 +5,10 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updatePadding
 import com.example.sdn4angsau.samosa.databinding.ActivityProfileBinding
 
 // Tambahan Import wajib untuk fungsi Logout Google dan Firebase
@@ -23,6 +26,17 @@ class ProfileActivity : AppCompatActivity() {
 
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val extraTopPadding = (12 * resources.displayMetrics.density).toInt()
+            val extraBottomPadding = (24 * resources.displayMetrics.density).toInt()
+
+            binding.headerProfileBar.updatePadding(top = systemBars.top + extraTopPadding)
+            binding.scrollProfile.updatePadding(bottom = systemBars.bottom + extraBottomPadding)
+
+            insets
+        }
 
         // MEMAKSA IKON JAM & BATERAI MENJADI PUTIH TERANG
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
