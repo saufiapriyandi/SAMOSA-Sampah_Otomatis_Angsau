@@ -14,6 +14,7 @@ object TempatSampahLocalStore {
     private const val KEY_LOKASI = "lokasi"
     private const val KEY_PERSENTASE = "persentase"
     private const val KEY_IS_ACTIVE = "is_active"
+    private const val KEY_NOTIF_THRESHOLD = "notif_threshold"
 
     fun getAll(context: Context): MutableList<TempatSampah> {
         val prefs = context.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -81,6 +82,7 @@ object TempatSampahLocalStore {
                     .put(KEY_LOKASI, item.lokasi)
                     .put(KEY_PERSENTASE, item.persentase)
                     .put(KEY_IS_ACTIVE, item.isActive)
+                    .put(KEY_NOTIF_THRESHOLD, item.notifThreshold)
             )
         }
 
@@ -100,7 +102,8 @@ object TempatSampahLocalStore {
                     binId = jsonObject.optString(KEY_BIN_ID),
                     lokasi = jsonObject.optString(KEY_LOKASI),
                     persentase = jsonObject.optInt(KEY_PERSENTASE),
-                    isActive = jsonObject.optBoolean(KEY_IS_ACTIVE, true)
+                    isActive = jsonObject.optBoolean(KEY_IS_ACTIVE, true),
+                    notifThreshold = jsonObject.optInt(KEY_NOTIF_THRESHOLD, 90)
                 )
             )
         }
@@ -110,11 +113,11 @@ object TempatSampahLocalStore {
 
     private fun defaultBins(): List<TempatSampah> {
         return listOf(
-            TempatSampah("3", "Laboratorium", 100, true),
-            TempatSampah("4", "Ruang Kantor", 95, true),
-            TempatSampah("5", "Kantin SDN 4", 78, true),
-            TempatSampah("1", "Perpustakaan", 45, true),
-            TempatSampah("2", "Ruang Guru", 12, true)
+            TempatSampah("3", "Laboratorium", 100, true, 90),
+            TempatSampah("4", "Ruang Kantor", 95, true, 90),
+            TempatSampah("5", "Kantin SDN 4", 78, true, 90),
+            TempatSampah("1", "Perpustakaan", 45, true, 90),
+            TempatSampah("2", "Ruang Guru", 12, true, 90)
         )
     }
 }

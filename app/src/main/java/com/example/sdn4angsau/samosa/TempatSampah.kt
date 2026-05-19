@@ -10,11 +10,12 @@ data class TempatSampah(
     val binId: String,
     val lokasi: String,
     val persentase: Int,
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
+    val notifThreshold: Int = 85
 ) {
     val status: TempatSampahStatus
         get() = when {
-            persentase >= 90 -> TempatSampahStatus.PENUH
+            persentase >= notifThreshold -> TempatSampahStatus.PENUH
             persentase >= 60 -> TempatSampahStatus.WASPADA
             else -> TempatSampahStatus.AMAN
         }

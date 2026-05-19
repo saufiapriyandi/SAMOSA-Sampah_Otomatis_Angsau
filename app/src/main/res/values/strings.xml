@@ -96,6 +96,8 @@
     <string name="management_field_bin_id_hint">Contoh: BIN-07</string>
     <string name="management_field_percentage">Persentase simulasi</string>
     <string name="management_field_percentage_hint">0 - 100</string>
+    <string name="management_field_threshold">Batas persentase notifikasi</string>
+    <string name="management_field_threshold_hint">Contoh: 90</string>
     <string name="management_field_note">Dipakai untuk simulasi sebelum sensor tersedia.</string>
     <string name="management_active_title">Tampilkan di dashboard</string>
     <string name="management_active_subtitle">Jika nonaktif, tong tidak tampil di dashboard dan laporan.</string>
@@ -105,6 +107,7 @@
     <string name="management_validation_bin_id">BIN-ID belum diisi.</string>
     <string name="management_validation_bin_id_duplicate">BIN-ID sudah dipakai. Gunakan BIN-ID lain.</string>
     <string name="management_validation_percentage">Persentase harus diisi 0 sampai 100.</string>
+    <string name="management_validation_threshold">Batas notifikasi harus diisi 0 sampai 100.</string>
     <string name="management_toast_saved_new">Tong sampah baru berhasil ditambahkan.</string>
     <string name="management_toast_saved_edit">Perubahan data tong sampah berhasil disimpan.</string>
     <string name="management_toast_activated">%1$s ditampilkan kembali di dashboard.</string>

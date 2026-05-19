@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sdn4angsau.samosa.databinding.ActivityBinManagementBinding
 import com.example.sdn4angsau.samosa.databinding.DialogBinFormBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.database.FirebaseDatabase
 import java.util.Locale
 import kotlin.math.min
 
@@ -65,6 +66,10 @@ class BinManagementActivity : AppCompatActivity() {
         if (item.isActive == isActive) return
 
         TempatSampahLocalStore.updateActive(this, item.binId, isActive)
+        
+        // Opsional: Update juga ke Firebase saat toggle aktif/nonaktif
+        saveToFirebase(item.copy(isActive = isActive))
+        
         loadBins()
 
         val message = if (isActive) {
@@ -89,8 +94,11 @@ class BinManagementActivity : AppCompatActivity() {
             dialogBinding.etLokasiBinForm.setText(existingItem.lokasi)
             dialogBinding.etBinIdBinForm.setText(existingItem.binId)
             dialogBinding.etPersentaseBinForm.setText(existingItem.persentase.toString())
+            dialogBinding.etThresholdBinForm.setText(existingItem.notifThreshold.toString())
             dialogBinding.switchAktifBinForm.isChecked = existingItem.isActive
         } else {
+            // Default threshold untuk tong baru
+            dialogBinding.etThresholdBinForm.setText("90")
             dialogBinding.switchAktifBinForm.isChecked = true
         }
 
@@ -116,10 +124,12 @@ class BinManagementActivity : AppCompatActivity() {
                 val lokasi = dialogBinding.etLokasiBinForm.text.toString().trim()
                 val binId = dialogBinding.etBinIdBinForm.text.toString().trim()
                 val persentase = dialogBinding.etPersentaseBinForm.text.toString().trim().toIntOrNull()
+                val threshold = dialogBinding.etThresholdBinForm.text.toString().trim().toIntOrNull()
 
                 dialogBinding.tilLokasiBinForm.error = null
                 dialogBinding.tilBinIdBinForm.error = null
                 dialogBinding.tilPersentaseBinForm.error = null
+                dialogBinding.tilThresholdBinForm.error = null
 
                 when {
                     lokasi.isBlank() -> {
@@ -138,15 +148,25 @@ class BinManagementActivity : AppCompatActivity() {
                         dialogBinding.tilPersentaseBinForm.error =
                             getString(R.string.management_validation_percentage)
                     }
+                    threshold == null || threshold !in 0..100 -> {
+                        dialogBinding.tilThresholdBinForm.error =
+                            getString(R.string.management_validation_threshold)
+                    }
                     else -> {
                         val item = TempatSampah(
                             binId = binId,
                             lokasi = lokasi,
                             persentase = persentase,
-                            isActive = dialogBinding.switchAktifBinForm.isChecked
+                            isActive = dialogBinding.switchAktifBinForm.isChecked,
+                            notifThreshold = threshold
                         )
 
+                        // Simpan Lokal
                         TempatSampahLocalStore.upsert(this, item, existingItem?.binId)
+                        
+                        // Simpan Firebase
+                        saveToFirebase(item)
+                        
                         loadBins()
 
                         Toast.makeText(
@@ -167,5 +187,25 @@ class BinManagementActivity : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    /**
+     * Menyimpan atau memperbarui data tong sampah ke Firebase Realtime Database.
+     */
+    private fun saveToFirebase(item: TempatSampah) {
+        val database = FirebaseDatabase.getInstance("https://samosa-sampah-otomatis-angsau-default-rtdb.asia-southeast1.firebasedatabase.app/")
+        val binRef = database.getReference("tempat_sampah").child(item.binId)
+        
+        val data = mapOf(
+            "binId" to item.binId,
+            "lokasi" to item.lokasi,
+            "persentase" to item.persentase,
+            "isActive" to item.isActive,
+            "notifThreshold" to item.notifThreshold
+        )
+
+        binRef.setValue(data).addOnFailureListener {
+            Toast.makeText(this, "Gagal sinkronisasi ke Firebase: ${it.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 }
