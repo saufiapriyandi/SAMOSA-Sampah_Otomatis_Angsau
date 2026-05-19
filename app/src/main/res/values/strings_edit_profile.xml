@@ -1,0 +1,18 @@
+<resources>
+    <string name="edit_profile_title">Edit Profil</string>
+    <string name="edit_profile_name_label">Nama Lengkap</string>
+    <string name="edit_profile_name_hint">Masukkan nama lengkap</string>
+    <string name="edit_profile_id_label">NIP / ID Pegawai</string>
+    <string name="edit_profile_id_hint">Masukkan NIP atau ID Pegawai</string>
+    <string name="edit_profile_position_label">Jabatan</string>
+    <string name="edit_profile_position_hint">Masukkan jabatan (contoh: Kepala Sekolah)</string>
+    <string name="edit_profile_instansi_label">Instansi</string>
+    <string name="edit_profile_instansi_hint">Masukkan nama instansi</string>
+    <string name="edit_profile_save_button">Perbarui Profil</string>
+    <string name="edit_profile_success">Profil berhasil diperbarui</string>
+    <string name="edit_profile_error_empty">Semua field harus diisi</string>
+    <string name="edit_profile_change_photo">Ganti Foto Profil</string>
+    <string name="edit_profile_choose_source">Pilih Sumber Foto</string>
+    <string name="edit_profile_camera">Kamera</string>
+    <string name="edit_profile_gallery">Galeri</string>
+</resources>
