@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,6 +19,10 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sdn4angsau.samosa.databinding.ActivityDashboardBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -32,6 +37,10 @@ class DashboardActivity : AppCompatActivity() {
     private var lastHandledDataVersion: Long = 0L
     private var latestBinsForNotification: List<TempatSampah> = emptyList()
     private var hasRequestedNotificationPermission = false
+
+    // Variabel penampung untuk menggabungkan data asli dan data dummy
+    private var dataFirebaseAsli: TempatSampah? = null
+    private var dataDummySaatIni: List<TempatSampah> = emptyList()
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -48,20 +57,16 @@ class DashboardActivity : AppCompatActivity() {
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 1. MENDETEKSI PONI HP (ATAS) & TOMBOL NAVIGASI (BAWAH)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            // Jarak Atas
             val extraPaddingTop = (16 * resources.displayMetrics.density).toInt()
             binding.topBar.setPadding(binding.topBar.paddingLeft, systemBars.top + extraPaddingTop, binding.topBar.paddingRight, binding.topBar.paddingBottom)
 
-            // Kotak Status Bar Buatan
             val layoutParams = binding.fakeStatusBar.layoutParams
             layoutParams.height = systemBars.top
             binding.fakeStatusBar.layoutParams = layoutParams
 
-            // Jarak Bawah
             binding.scrollView.setPadding(binding.scrollView.paddingLeft, binding.scrollView.paddingTop, binding.scrollView.paddingRight, systemBars.bottom)
 
             insets
@@ -69,7 +74,6 @@ class DashboardActivity : AppCompatActivity() {
 
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
-        // 2. EFEK MEMUDAR (FADE) STATUS BAR
         binding.scrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
             val alpha = (scrollY / 150f).coerceIn(0f, 1f)
             binding.fakeStatusBar.alpha = alpha
@@ -85,7 +89,6 @@ class DashboardActivity : AppCompatActivity() {
         binding.rvTempatSampah.layoutManager = LinearLayoutManager(this)
         binding.rvTempatSampah.adapter = sampahAdapter
 
-        // PERINTAH KLIK PROFIL
         binding.btnProfile.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
@@ -104,6 +107,54 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         observeUiState()
+        setupFirebaseRealtimeLog()
+    }
+
+    // Menggabungkan data Firebase dengan data dari Repository
+    private fun perbaruiTampilanList() {
+        val listGabungan = mutableListOf<TempatSampah>()
+
+        // Memasukkan data asli ke urutan pertama (jika ada)
+        dataFirebaseAsli?.let { listGabungan.add(it) }
+
+        // Memasukkan sisa data dummy
+        listGabungan.addAll(dataDummySaatIni)
+
+        sampahAdapter.submitList(listGabungan)
+    }
+
+    private fun setupFirebaseRealtimeLog() {
+        val database = FirebaseDatabase.getInstance()
+        val myRef = database.getReference("Tempat_Sampah_1")
+
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val statusTutup = snapshot.child("status_tutup").getValue(String::class.java) ?: "Tidak Terbaca"
+                    val jarakLuar = snapshot.child("jarak_cm").getValue(Int::class.java) ?: 0
+                    val kapasitasDalam = snapshot.child("kapasitas_persen").getValue(Int::class.java) ?: 0
+
+                    Log.d("SAMOSA_IOT", "======= UPDATE DATA IOT SAMOSA =======")
+                    Log.d("SAMOSA_IOT", "Sensor Jarak Luar  : $jarakLuar cm")
+                    Log.d("SAMOSA_IOT", "Motor Servo Tutup  : $statusTutup")
+                    Log.d("SAMOSA_IOT", "Sensor Dalam (Isi) : $kapasitasDalam %")
+                    Log.d("SAMOSA_IOT", "======================================")
+
+                    // Bungkus data menjadi objek TempatSampah tanpa isFull
+                    dataFirebaseAsli = TempatSampah(
+                        binId = "Tempat_Sampah_1",
+                        lokasi = "Alat SAMOSA Asli",
+                        persentase = kapasitasDalam
+                    )
+
+                    perbaruiTampilanList()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("SAMOSA_IOT", "Gagal terhubung ke Firebase: ${error.message}")
+            }
+        })
     }
 
     override fun onResume() {
@@ -176,7 +227,9 @@ class DashboardActivity : AppCompatActivity() {
                     View.GONE
                 }
 
-            sampahAdapter.submitList(state.visibleBins)
+            // Simpan data state ke variabel, lalu perbarui tampilan
+            dataDummySaatIni = state.visibleBins
+            perbaruiTampilanList()
 
             latestBinsForNotification = TempatSampahLocalStore.getAll(this)
             if (state.dataVersion != 0L && state.dataVersion != lastHandledDataVersion) {
@@ -198,10 +251,10 @@ class DashboardActivity : AppCompatActivity() {
 
         val notificationPermissionGranted =
             Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
+                    ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
 
         if (!notificationPermissionGranted) {
             if (!hasRequestedNotificationPermission) {
