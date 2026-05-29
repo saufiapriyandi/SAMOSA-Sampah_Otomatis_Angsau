@@ -3,48 +3,28 @@ package com.example.sdn4angsau.samosa
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.sdn4angsau.samosa.databinding.ActivityEditProfileBinding
 import java.io.File
 import java.io.FileOutputStream
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class EditProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEditProfileBinding
-    private var currentPhotoUri: Uri? = null
-    private var tempImageUri: Uri? = null
+    private var selectedImageUri: Uri? = null
 
-    // Launcher for Gallery
-    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-            currentPhotoUri = uri
-            binding.ivEditProfilePhoto.setImageURI(uri)
+    // 2. Logika Akses Foto Langsung ke Galeri (Tanpa Dialog Kamera)
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it
+            binding.ivEditProfilePhoto.setImageURI(it)
             binding.ivEditProfilePhoto.setPadding(0, 0, 0, 0)
             binding.ivEditProfilePhoto.imageTintList = null
-        }
-    }
-
-    // Launcher for Camera
-    private val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        if (success) {
-            tempImageUri?.let { uri ->
-                currentPhotoUri = uri
-                binding.ivEditProfilePhoto.setImageURI(uri)
-                binding.ivEditProfilePhoto.setPadding(0, 0, 0, 0)
-                binding.ivEditProfilePhoto.imageTintList = null
-            }
         }
     }
 
@@ -60,78 +40,38 @@ class EditProfileActivity : AppCompatActivity() {
             insets
         }
 
+        // 4. Logika Menampilkan Data (Load Data)
         loadUserData()
 
+        // 1. Logika Tombol Kembali (Panah Back)
         binding.btnBackEditProfile.setOnClickListener {
             finish()
         }
 
-        binding.btnChangePhoto.setOnClickListener {
-            showImageSourceDialog()
-        }
+        // 2. Klik foto atau tombol kamera langsung buka galeri
+        val openGallery = { getContent.launch("image/*") }
+        binding.ivEditProfilePhoto.setOnClickListener { openGallery() }
+        binding.btnChangePhoto.setOnClickListener { openGallery() }
 
+        // 3. Logika Penyimpanan Lokal
         binding.btnUpdateProfile.setOnClickListener {
             saveUserData()
         }
     }
 
-    private fun showImageSourceDialog() {
-        val options = arrayOf(
-            getString(R.string.edit_profile_camera),
-            getString(R.string.edit_profile_gallery)
-        )
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.edit_profile_choose_source))
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> openCamera()
-                    1 -> openGallery()
-                }
-            }
-            .show()
-    }
-
-    private fun openGallery() {
-        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-    }
-
-    private fun openCamera() {
-        val photoFile = createImageFile()
-        photoFile?.also { file ->
-            val uri = FileProvider.getUriForFile(
-                this,
-                "${applicationContext.packageName}.fileprovider",
-                file
-            )
-            tempImageUri = uri
-            takePicture.launch(uri)
-        }
-    }
-
-    private fun createImageFile(): File? {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return try {
-            File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
     private fun loadUserData() {
         val sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-        binding.etFullName.setText(sharedPref.getString("full_name", "Kepala Sekolah"))
-        binding.etEmployeeId.setText(sharedPref.getString("employee_id", "STAF-ANGSAU-001"))
-        binding.etPosition.setText(sharedPref.getString("position", "Kepala Sekolah"))
-        binding.etInstitution.setText(sharedPref.getString("institution", "UPTD SDN 4 Angsau"))
+        binding.etFullName.setText(sharedPref.getString("full_name", ""))
+        binding.etEmployeeId.setText(sharedPref.getString("employee_id", ""))
+        binding.etPosition.setText(sharedPref.getString("position", ""))
+        binding.etInstitution.setText(sharedPref.getString("institution", ""))
 
-        val photoUriString = sharedPref.getString("profile_photo_uri", null)
-        if (photoUriString != null) {
-            val uri = Uri.parse(photoUriString)
-            binding.ivEditProfilePhoto.setImageURI(uri)
+        // Load foto dari Internal Storage jika ada
+        val file = File(filesDir, "profil_user.jpg")
+        if (file.exists()) {
+            binding.ivEditProfilePhoto.setImageURI(Uri.fromFile(file))
             binding.ivEditProfilePhoto.setPadding(0, 0, 0, 0)
             binding.ivEditProfilePhoto.imageTintList = null
-            currentPhotoUri = uri
         }
     }
 
@@ -141,49 +81,36 @@ class EditProfileActivity : AppCompatActivity() {
         val position = binding.etPosition.text.toString().trim()
         val institution = binding.etInstitution.text.toString().trim()
 
-        if (name.isEmpty() || id.isEmpty() || position.isEmpty() || institution.isEmpty()) {
-            Toast.makeText(this, getString(R.string.edit_profile_error_empty), Toast.LENGTH_SHORT).show()
+        if (name.isEmpty() || institution.isEmpty()) {
+            Toast.makeText(this, "Nama Lengkap dan Instansi wajib diisi", Toast.LENGTH_SHORT).show()
             return
         }
 
+        // Simpan data teks ke SharedPreferences
         val sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-        
-        // Fix for Argument type mismatch by using ?.let
-        val finalPhotoUri = currentPhotoUri?.let { saveImageToInternalStorage(it) }
-
-        with(sharedPref.edit()) {
+        sharedPref.edit().apply {
             putString("full_name", name)
             putString("employee_id", id)
             putString("position", position)
             putString("institution", institution)
-            if (finalPhotoUri != null) {
-                putString("profile_photo_uri", finalPhotoUri.toString())
-            }
             apply()
         }
 
-        Toast.makeText(this, getString(R.string.edit_profile_success), Toast.LENGTH_SHORT).show()
-        finish()
-    }
-
-    private fun saveImageToInternalStorage(uri: Uri): Uri? {
-        // If it's already an internal file from our app, no need to copy
-        if (uri.scheme == "file" && uri.path?.contains(filesDir.path) == true) return uri
-
-        return try {
-            val inputStream = contentResolver.openInputStream(uri)
-            val fileName = "profile_photo.jpg"
-            val file = File(filesDir, fileName)
-            val outputStream = FileOutputStream(file)
-            inputStream?.use { input ->
-                outputStream.use { output ->
-                    input.copyTo(output)
+        // 3. Simpan File Foto secara permanen ke Internal Storage (filesDir)
+        selectedImageUri?.let { uri ->
+            try {
+                contentResolver.openInputStream(uri)?.use { input ->
+                    val file = File(filesDir, "profil_user.jpg")
+                    FileOutputStream(file).use { output ->
+                        input.copyTo(output)
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            Uri.fromFile(file)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
+
+        Toast.makeText(this, "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show()
+        finish()
     }
 }
