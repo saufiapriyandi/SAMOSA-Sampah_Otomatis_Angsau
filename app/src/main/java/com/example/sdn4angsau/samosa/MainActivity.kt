@@ -46,14 +46,37 @@ class MainActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         binding.btnLogin.setOnClickListener {
+            val blockExpiryTime = sharedPref.getLong("BLOCK_EXPIRY_TIME", 0L)
+            val currentTime = System.currentTimeMillis()
+
+            if (blockExpiryTime > currentTime) {
+                val remainingMinutes = ((blockExpiryTime - currentTime) / 60000) + 1
+                Toast.makeText(this, "Terlalu banyak percobaan gagal. Silakan coba lagi dalam $remainingMinutes menit.", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            } else if (blockExpiryTime != 0L) {
+                // Blokir sudah kedaluwarsa, reset counter
+                sharedPref.edit().putInt("FAILED_LOGIN_ATTEMPTS", 0).putLong("BLOCK_EXPIRY_TIME", 0L).apply()
+            }
+
             val username = binding.etUsername.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
             if (username == "admin123" && password == "admin123") {
-                sharedPref.edit().putBoolean("SUDAH_LOGIN", true).apply()
+                sharedPref.edit().putBoolean("SUDAH_LOGIN", true).putInt("FAILED_LOGIN_ATTEMPTS", 0).apply()
                 pindahKeDashboard()
             } else {
-                Toast.makeText(this, "Username atau Password salah", Toast.LENGTH_SHORT).show()
+                var failedAttempts = sharedPref.getInt("FAILED_LOGIN_ATTEMPTS", 0)
+                failedAttempts++
+                
+                if (failedAttempts >= 3) {
+                    val newBlockExpiryTime = System.currentTimeMillis() + (15 * 60 * 1000) // 15 menit
+                    sharedPref.edit().putInt("FAILED_LOGIN_ATTEMPTS", failedAttempts).putLong("BLOCK_EXPIRY_TIME", newBlockExpiryTime).apply()
+                    Toast.makeText(this, "Akses diblokir karena 3 kali gagal. Coba lagi dalam 15 menit.", Toast.LENGTH_LONG).show()
+                } else {
+                    sharedPref.edit().putInt("FAILED_LOGIN_ATTEMPTS", failedAttempts).apply()
+                    val sisaPercobaan = 3 - failedAttempts
+                    Toast.makeText(this, "Username atau Password salah. Sisa percobaan: $sisaPercobaan", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
