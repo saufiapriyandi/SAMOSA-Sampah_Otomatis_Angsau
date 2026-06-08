@@ -58,6 +58,15 @@ class DetailActivity : AppCompatActivity() {
 
         binding.tvDetailLokasi.text = namaLokasi
         binding.tvDetailBinId.text = getString(R.string.detail_bin_id_format, binId)
+        // === KODE TAMBAHAN UNTUK SENSOR (Tuan Putri) ===
+// Mengatur teks status penutup dan warnanya
+        binding.tvStatusPenutup.text = "TERTUTUP"
+        binding.tvStatusPenutup.setTextColor(Color.parseColor("#20B273")) // Warna hijau (aman)
+
+// Mengatur angka jarak pada sensor ultrasonik
+        binding.tvSensor1.text = "10 cm" // Jarak sensor luar
+        binding.tvSensor2.text = "10 cm" // Jarak sensor dalam
+// ===============================================
 
         val kumpulanData = List(5) { dayIndex ->
             TempatSampahHistoryHelper.getDailyPercentages(

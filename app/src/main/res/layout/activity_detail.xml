@@ -9,10 +9,14 @@
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollDetail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#F5F7F9"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -21,9 +25,11 @@
 
             <View
                 android:id="@+id/bgHeader"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="230dp"
                 android:background="#20B273"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -33,7 +39,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="112dp"
                 android:layout_marginEnd="24dp"
-                android:text="Memuat Data..."
+                android:text="Memuat Data"
                 android:textColor="#FFFFFF"
                 android:textSize="28sp"
                 android:textStyle="bold"
@@ -52,112 +58,113 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvDetailLokasi">
 
-            <TextView
-                android:id="@+id/tvDetailBinId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="BIN-ID: -"
-                android:textColor="#E0E0E0"
-                android:textSize="12sp"
-                android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/tvDetailBinId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BIN-ID: -"
+                    android:textColor="#E0E0E0"
+                    android:textSize="12sp"
+                    android:textStyle="bold"/>
 
-            <View
-                android:layout_width="4dp"
-                android:layout_height="4dp"
-                android:layout_marginHorizontal="8dp"
-                android:background="#A8D5BA"
-                android:layout_gravity="center"/>
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="4dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:background="#A8D5BA"
+                    android:layout_gravity="center"/>
 
-            <TextView
-                android:id="@+id/tvTanggal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Kamis, 02 April 2026"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"
-                android:textStyle="bold"/>
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tvTanggal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kamis, 02 April 2026"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardGrafik"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="24dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="6dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layoutInfo">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Rekapitulasi Harian"
-                    android:textColor="#222222"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="24dp"
-                    android:weightSum="5">
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-                    <androidx.cardview.widget.CardView android:id="@+id/btnSenin" android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:layout_marginEnd="4dp" app:cardBackgroundColor="#F5F7F9" app:cardCornerRadius="8dp" app:cardElevation="0dp" android:clickable="true" android:focusable="true"><TextView android:id="@+id/tvSenin" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Sen" android:textColor="#888888" android:textSize="12sp" android:textStyle="bold" android:gravity="center"/></androidx.cardview.widget.CardView>
-                    <androidx.cardview.widget.CardView android:id="@+id/btnSelasa" android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:layout_marginEnd="4dp" app:cardBackgroundColor="#F5F7F9" app:cardCornerRadius="8dp" app:cardElevation="0dp" android:clickable="true" android:focusable="true"><TextView android:id="@+id/tvSelasa" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Sel" android:textColor="#888888" android:textSize="12sp" android:textStyle="bold" android:gravity="center"/></androidx.cardview.widget.CardView>
-                    <androidx.cardview.widget.CardView android:id="@+id/btnRabu" android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:layout_marginEnd="4dp" app:cardBackgroundColor="#F5F7F9" app:cardCornerRadius="8dp" app:cardElevation="0dp" android:clickable="true" android:focusable="true"><TextView android:id="@+id/tvRabu" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Rab" android:textColor="#888888" android:textSize="12sp" android:textStyle="bold" android:gravity="center"/></androidx.cardview.widget.CardView>
-                    <androidx.cardview.widget.CardView android:id="@+id/btnKamis" android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:layout_marginEnd="4dp" app:cardBackgroundColor="#20B273" app:cardCornerRadius="8dp" app:cardElevation="0dp" android:clickable="true" android:focusable="true"><TextView android:id="@+id/tvKamis" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Kam" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" android:gravity="center"/></androidx.cardview.widget.CardView>
-                    <androidx.cardview.widget.CardView android:id="@+id/btnJumat" android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" app:cardBackgroundColor="#F5F7F9" app:cardCornerRadius="8dp" app:cardElevation="0dp" android:clickable="true" android:focusable="true"><TextView android:id="@+id/tvJumat" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Jum" android:textColor="#888888" android:textSize="12sp" android:textStyle="bold" android:gravity="center"/></androidx.cardview.widget.CardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rekapitulasi Harian"
+                        android:textColor="#222222"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="24dp"
+                        android:weightSum="5">
+
+                        <androidx.cardview.widget.CardView android:id="@+id/btnSenin" android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:layout_marginEnd="4dp" app:cardBackgroundColor="#F5F7F9" app:cardCornerRadius="8dp" app:cardElevation="0dp" android:clickable="true" android:focusable="true"><TextView android:id="@+id/tvSenin" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Sen" android:textColor="#888888" android:textSize="12sp" android:textStyle="bold" android:gravity="center"/></androidx.cardview.widget.CardView>
+                        <androidx.cardview.widget.CardView android:id="@+id/btnSelasa" android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:layout_marginEnd="4dp" app:cardBackgroundColor="#F5F7F9" app:cardCornerRadius="8dp" app:cardElevation="0dp" android:clickable="true" android:focusable="true"><TextView android:id="@+id/tvSelasa" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Sel" android:textColor="#888888" android:textSize="12sp" android:textStyle="bold" android:gravity="center"/></androidx.cardview.widget.CardView>
+                        <androidx.cardview.widget.CardView android:id="@+id/btnRabu" android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:layout_marginEnd="4dp" app:cardBackgroundColor="#F5F7F9" app:cardCornerRadius="8dp" app:cardElevation="0dp" android:clickable="true" android:focusable="true"><TextView android:id="@+id/tvRabu" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Rab" android:textColor="#888888" android:textSize="12sp" android:textStyle="bold" android:gravity="center"/></androidx.cardview.widget.CardView>
+                        <androidx.cardview.widget.CardView android:id="@+id/btnKamis" android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" android:layout_marginEnd="4dp" app:cardBackgroundColor="#20B273" app:cardCornerRadius="8dp" app:cardElevation="0dp" android:clickable="true" android:focusable="true"><TextView android:id="@+id/tvKamis" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Kam" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" android:gravity="center"/></androidx.cardview.widget.CardView>
+                        <androidx.cardview.widget.CardView android:id="@+id/btnJumat" android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1" app:cardBackgroundColor="#F5F7F9" app:cardCornerRadius="8dp" app:cardElevation="0dp" android:clickable="true" android:focusable="true"><TextView android:id="@+id/tvJumat" android:layout_width="match_parent" android:layout_height="match_parent" android:text="Jum" android:textColor="#888888" android:textSize="12sp" android:textStyle="bold" android:gravity="center"/></androidx.cardview.widget.CardView>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:orientation="horizontal"
+                        android:gravity="bottom"
+                        android:baselineAligned="false">
+
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                            <TextView android:id="@+id/val08" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10%" android:textSize="10sp" android:textColor="#888888" android:textStyle="bold" android:layout_marginBottom="4dp"/>
+                            <androidx.cardview.widget.CardView android:id="@+id/bar08" android:layout_width="24dp" android:layout_height="20dp" app:cardBackgroundColor="#20B273" app:cardCornerRadius="6dp" app:cardElevation="0dp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="08:00" android:textSize="10sp" android:textColor="#555555" android:layout_marginTop="8dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                            <TextView android:id="@+id/val10" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="35%" android:textSize="10sp" android:textColor="#888888" android:textStyle="bold" android:layout_marginBottom="4dp"/>
+                            <androidx.cardview.widget.CardView android:id="@+id/bar10" android:layout_width="24dp" android:layout_height="40dp" app:cardBackgroundColor="#20B273" app:cardCornerRadius="6dp" app:cardElevation="0dp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10:00" android:textSize="10sp" android:textColor="#555555" android:layout_marginTop="8dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                            <TextView android:id="@+id/val12" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="65%" android:textSize="10sp" android:textColor="#888888" android:textStyle="bold" android:layout_marginBottom="4dp"/>
+                            <androidx.cardview.widget.CardView android:id="@+id/bar12" android:layout_width="24dp" android:layout_height="70dp" app:cardBackgroundColor="#FFA500" app:cardCornerRadius="6dp" app:cardElevation="0dp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12:00" android:textSize="10sp" android:textColor="#555555" android:layout_marginTop="8dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                            <TextView android:id="@+id/val14" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="85%" android:textSize="10sp" android:textColor="#888888" android:textStyle="bold" android:layout_marginBottom="4dp"/>
+                            <androidx.cardview.widget.CardView android:id="@+id/bar14" android:layout_width="24dp" android:layout_height="90dp" app:cardBackgroundColor="#FFA500" app:cardCornerRadius="6dp" app:cardElevation="0dp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="14:00" android:textSize="10sp" android:textColor="#555555" android:layout_marginTop="8dp"/>
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
+                            <TextView android:id="@+id/tvGrafikSekarang" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="100%" android:textSize="10sp" android:textColor="#FF4B4B" android:textStyle="bold" android:layout_marginBottom="4dp"/>
+                            <androidx.cardview.widget.CardView android:id="@+id/barGrafikSekarang" android:layout_width="28dp" android:layout_height="110dp" app:cardBackgroundColor="#FF4B4B" app:cardCornerRadius="8dp" app:cardElevation="2dp"/>
+                            <TextView android:id="@+id/tvWaktuKini" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Kini" android:textSize="10sp" android:textColor="#222222" android:textStyle="bold" android:layout_marginTop="8dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="140dp"
-                    android:orientation="horizontal"
-                    android:gravity="bottom"
-                    android:baselineAligned="false">
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
-                        <TextView android:id="@+id/val08" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10%" android:textSize="10sp" android:textColor="#888888" android:textStyle="bold" android:layout_marginBottom="4dp"/>
-                        <androidx.cardview.widget.CardView android:id="@+id/bar08" android:layout_width="24dp" android:layout_height="20dp" app:cardBackgroundColor="#20B273" app:cardCornerRadius="6dp" app:cardElevation="0dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="08:00" android:textSize="10sp" android:textColor="#555555" android:layout_marginTop="8dp"/>
-                    </LinearLayout>
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
-                        <TextView android:id="@+id/val10" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="35%" android:textSize="10sp" android:textColor="#888888" android:textStyle="bold" android:layout_marginBottom="4dp"/>
-                        <androidx.cardview.widget.CardView android:id="@+id/bar10" android:layout_width="24dp" android:layout_height="40dp" app:cardBackgroundColor="#20B273" app:cardCornerRadius="6dp" app:cardElevation="0dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10:00" android:textSize="10sp" android:textColor="#555555" android:layout_marginTop="8dp"/>
-                    </LinearLayout>
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
-                        <TextView android:id="@+id/val12" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="65%" android:textSize="10sp" android:textColor="#888888" android:textStyle="bold" android:layout_marginBottom="4dp"/>
-                        <androidx.cardview.widget.CardView android:id="@+id/bar12" android:layout_width="24dp" android:layout_height="70dp" app:cardBackgroundColor="#FFA500" app:cardCornerRadius="6dp" app:cardElevation="0dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12:00" android:textSize="10sp" android:textColor="#555555" android:layout_marginTop="8dp"/>
-                    </LinearLayout>
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
-                        <TextView android:id="@+id/val14" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="85%" android:textSize="10sp" android:textColor="#888888" android:textStyle="bold" android:layout_marginBottom="4dp"/>
-                        <androidx.cardview.widget.CardView android:id="@+id/bar14" android:layout_width="24dp" android:layout_height="90dp" app:cardBackgroundColor="#FFA500" app:cardCornerRadius="6dp" app:cardElevation="0dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="14:00" android:textSize="10sp" android:textColor="#555555" android:layout_marginTop="8dp"/>
-                    </LinearLayout>
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal">
-                        <TextView android:id="@+id/tvGrafikSekarang" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="100%" android:textSize="10sp" android:textColor="#FF4B4B" android:textStyle="bold" android:layout_marginBottom="4dp"/>
-                        <androidx.cardview.widget.CardView android:id="@+id/barGrafikSekarang" android:layout_width="28dp" android:layout_height="110dp" app:cardBackgroundColor="#FF4B4B" app:cardCornerRadius="8dp" app:cardElevation="2dp"/>
-                        <TextView android:id="@+id/tvWaktuKini" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Kini" android:textSize="10sp" android:textColor="#222222" android:textStyle="bold" android:layout_marginTop="8dp"/>
-                    </LinearLayout>
-
-                </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/tvTitleLog"
@@ -173,66 +180,200 @@
                 app:layout_constraintTop_toBottomOf="@id/cardGrafik" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/layoutLogContainer"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="vertical"
                 android:paddingHorizontal="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvTitleLog">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
-
-                    <androidx.cardview.widget.CardView android:layout_width="40dp" android:layout_height="40dp" app:cardBackgroundColor="#E8F5E9" app:cardCornerRadius="20dp" app:cardElevation="0dp">
-                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_monitor" app:tint="#20B273" android:layout_gravity="center"/>
-                    </androidx.cardview.widget.CardView>
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                        <TextView android:id="@+id/tvLogTerbaruStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Status: PENUH (100%)" android:textSize="14sp" android:textStyle="bold" android:textColor="#222222"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/detail_log_subtitle_current" android:textSize="12sp" android:textColor="#555555" android:layout_marginTop="2dp"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                        <androidx.cardview.widget.CardView android:layout_width="40dp" android:layout_height="40dp" app:cardBackgroundColor="#E8F5E9" app:cardCornerRadius="20dp" app:cardElevation="0dp">
+                            <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_monitor" app:tint="#20B273" android:layout_gravity="center"/>
+                        </androidx.cardview.widget.CardView>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                            <TextView android:id="@+id/tvLogTerbaruStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Status: PENUH (100%)" android:textSize="14sp" android:textStyle="bold" android:textColor="#222222"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/detail_log_subtitle_current" android:textSize="12sp" android:textColor="#555555" android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Kini" android:textSize="12sp" android:textColor="#20B273" android:textStyle="bold"/>
                     </LinearLayout>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Kini" android:textSize="12sp" android:textColor="#20B273" android:textStyle="bold"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12:00" android:textSize="14sp" android:textColor="#222222" android:textStyle="bold" android:layout_marginEnd="16dp"/>
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mencapai 65% Volume" android:textSize="14sp" android:textStyle="bold" android:textColor="#222222"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pengukuran siang hari" android:textSize="12sp" android:textColor="#555555"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12:00" android:textSize="14sp" android:textColor="#222222" android:textStyle="bold" android:layout_marginEnd="16dp"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mencapai 65% Volume" android:textSize="14sp" android:textStyle="bold" android:textColor="#222222"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pengukuran siang hari" android:textSize="12sp" android:textColor="#555555"/>
+                        </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="08:00" android:textSize="14sp" android:textColor="#222222" android:textStyle="bold" android:layout_marginEnd="16dp"/>
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sistem Direset / Kosong" android:textSize="14sp" android:textStyle="bold" android:textColor="#222222"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pengukuran pagi hari" android:textSize="12sp" android:textColor="#555555"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="08:00" android:textSize="14sp" android:textColor="#222222" android:textStyle="bold" android:layout_marginEnd="16dp"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sistem Direset / Kosong" android:textSize="14sp" android:textStyle="bold" android:textColor="#222222"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pengukuran pagi hari" android:textSize="12sp" android:textColor="#555555"/>
+                        </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                </androidx.cardview.widget.CardView>
             </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardStatusSensor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutLogContainer">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:text="Informasi Sensor Real-time"
+                        android:textColor="#222222"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_monitor"
+                            app:tint="#20B273" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:text="Status Penutup"
+                            android:textColor="#555555"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tv_status_penutup"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="TERTUTUP"
+                            android:textColor="#20B273"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="#EEEEEE" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_monitor"
+                            app:tint="#20B273" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:text="Sensor Luar Bak"
+                            android:textColor="#555555"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tv_sensor_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10 cm"
+                            android:textColor="#222222"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="#EEEEEE" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_monitor"
+                            app:tint="#20B273" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:text="Sensor Dalam Bak"
+                            android:textColor="#555555"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tv_sensor_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10 cm"
+                            android:textColor="#222222"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -240,7 +381,7 @@
         android:id="@+id/headerDetailBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/green_primary"
+        android:background="#20B273"
         android:elevation="8dp"
         android:paddingStart="24dp"
         android:paddingTop="12dp"
