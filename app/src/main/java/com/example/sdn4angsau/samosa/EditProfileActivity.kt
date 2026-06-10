@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.example.sdn4angsau.samosa.databinding.ActivityEditProfileBinding
 import java.io.File
 import java.io.FileOutputStream
@@ -34,9 +35,11 @@ class EditProfileActivity : AppCompatActivity() {
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+        // FIX BUG UI: Header terlalu mepet ke atas
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
+            val extraTopPadding = (12 * resources.displayMetrics.density).toInt()
+            binding.headerEditProfile.updatePadding(top = systemBars.top + extraTopPadding)
             insets
         }
 
@@ -88,15 +91,13 @@ class EditProfileActivity : AppCompatActivity() {
 
         // Simpan data teks ke SharedPreferences
         val sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
-        sharedPref.edit().apply {
-            putString("full_name", name)
-            putString("employee_id", id)
-            putString("position", position)
-            putString("institution", institution)
-            apply()
-        }
+        val editor = sharedPref.edit()
+        editor.putString("full_name", name)
+        editor.putString("employee_id", id)
+        editor.putString("position", position)
+        editor.putString("institution", institution)
 
-        // 3. Simpan File Foto secara permanen ke Internal Storage (filesDir)
+        // 3. FIX BUG LOGIKA: Simpan File Foto dan UPDATE profile_photo_uri agar tersinkronisasi
         selectedImageUri?.let { uri ->
             try {
                 contentResolver.openInputStream(uri)?.use { input ->
@@ -104,11 +105,15 @@ class EditProfileActivity : AppCompatActivity() {
                     FileOutputStream(file).use { output ->
                         input.copyTo(output)
                     }
+                    // Simpan path URI ke SharedPreferences untuk dibaca ProfileActivity
+                    editor.putString("profile_photo_uri", Uri.fromFile(file).toString())
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+        
+        editor.apply()
 
         Toast.makeText(this, "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show()
         finish()
