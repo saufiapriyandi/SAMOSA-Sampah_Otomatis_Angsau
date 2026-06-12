@@ -48,7 +48,12 @@ class ProfileActivity : AppCompatActivity() {
 
         // Navigasi ke Edit Profil saat mengetuk kartu profil
         binding.cardProfile.setOnClickListener {
-            startActivity(Intent(this, EditProfileActivity::class.java))
+            openEditProfile()
+        }
+
+        // Navigasi ke Edit Profil saat mengetuk tulisan "Edit"
+        binding.tvEditProfile.setOnClickListener {
+            openEditProfile()
         }
 
         binding.btnTutorialProfile.setOnClickListener {
@@ -84,31 +89,31 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    private fun openEditProfile() {
+        val intent = Intent(this, EditProfileActivity::class.java)
+        startActivity(intent)
+    }
+
     override fun onResume() {
         super.onResume()
-        // Memuat ulang data setiap kali kembali ke halaman ini
         displayUserProfile()
     }
 
     private fun displayUserProfile() {
         val sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
         
-        // Ambil data teks
         val name = sharedPref.getString("full_name", "Kepala Sekolah")
         val position = sharedPref.getString("position", "Kepala Sekolah")
         val employeeId = sharedPref.getString("employee_id", "STAF-ANGSAU-001")
         val institution = sharedPref.getString("institution", "UPTD SDN 4 Angsau")
         
-        // Ambil URI foto profil
         val photoUriString = sharedPref.getString("profile_photo_uri", null)
 
-        // Tampilkan teks
         binding.tvProfileName.text = name
         binding.tvProfilePosition.text = position
         binding.tvProfileId.text = "ID: $employeeId"
         binding.tvProfileInstitution.text = institution
 
-        // Logika memuat foto profil (menggunakan BitmapFactory agar lebih stabil untuk file internal)
         if (!photoUriString.isNullOrEmpty()) {
             try {
                 val uri = Uri.parse(photoUriString)
@@ -120,20 +125,17 @@ class ProfileActivity : AppCompatActivity() {
                             binding.ivProfilePhotoDisplay.setImageBitmap(bitmap)
                             binding.ivProfilePhotoDisplay.setPadding(0, 0, 0, 0)
                             binding.ivProfilePhotoDisplay.imageTintList = null
-                            binding.ivProfilePhotoDisplay.colorFilter = null
                         }
                     }
                 } else {
                     binding.ivProfilePhotoDisplay.setImageURI(uri)
                     binding.ivProfilePhotoDisplay.setPadding(0, 0, 0, 0)
                     binding.ivProfilePhotoDisplay.imageTintList = null
-                    binding.ivProfilePhotoDisplay.colorFilter = null
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         } else {
-            // Reset ke default jika tidak ada foto
             binding.ivProfilePhotoDisplay.setImageResource(R.drawable.ic_profile)
             val p = (20 * resources.displayMetrics.density).toInt()
             binding.ivProfilePhotoDisplay.setPadding(p, p, p, p)
