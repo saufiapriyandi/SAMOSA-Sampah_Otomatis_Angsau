@@ -8,12 +8,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sdn4angsau.samosa.databinding.ActivityBinManagementBinding
 import com.example.sdn4angsau.samosa.databinding.DialogBinFormBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.math.min
 
@@ -21,6 +27,7 @@ class BinManagementActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBinManagementBinding
     private lateinit var managementAdapter: BinManagementAdapter
+    private val repository: TempatSampahRepository = FirebaseTempatSampahRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +35,14 @@ class BinManagementActivity : AppCompatActivity() {
 
         binding = ActivityBinManagementBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Penyesuaian Header agar sama persis dengan Profile (Padding Status Bar)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val extraTopPadding = (12 * resources.displayMetrics.density).toInt()
+            binding.headerManageBar.updatePadding(top = systemBars.top + extraTopPadding)
+            insets
+        }
 
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
@@ -42,36 +57,35 @@ class BinManagementActivity : AppCompatActivity() {
         binding.btnBackManageBins.setOnClickListener { finish() }
         binding.btnAddBin.setOnClickListener { showBinFormDialog(null) }
 
-        loadBins()
+        observeBins()
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadBins()
-    }
-
-    private fun loadBins() {
-        val bins = TempatSampahLocalStore.getAll(this)
-            .sortedWith(
-                compareByDescending<TempatSampah> { it.isActive }
-                    .thenBy { it.lokasi.lowercase(Locale.getDefault()) }
-            )
-
-        managementAdapter.submitList(bins)
-        binding.tvManageEmpty.visibility = if (bins.isEmpty()) View.VISIBLE else View.GONE
-        binding.rvManageBins.visibility = if (bins.isEmpty()) View.GONE else View.VISIBLE
+    private fun observeBins() {
+        lifecycleScope.launch {
+            repository.getDaftarTempatSampahRealtime()
+                .catch { e ->
+                    Toast.makeText(this@BinManagementActivity, "Gagal memuat data: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+                .collect { bins ->
+                    val sortedBins = bins.sortedWith(
+                        compareByDescending<TempatSampah> { it.isActive }
+                            .thenBy { it.lokasi.lowercase(Locale.getDefault()) }
+                    )
+                    
+                    // Update local store as cache
+                    TempatSampahLocalStore.saveAll(this@BinManagementActivity, sortedBins)
+                    
+                    managementAdapter.submitList(sortedBins)
+                    binding.tvManageEmpty.visibility = if (sortedBins.isEmpty()) View.VISIBLE else View.GONE
+                    binding.rvManageBins.visibility = if (sortedBins.isEmpty()) View.GONE else View.VISIBLE
+                }
+        }
     }
 
     private fun updateBinActiveState(item: TempatSampah, isActive: Boolean) {
         if (item.isActive == isActive) return
-
-        TempatSampahLocalStore.updateActive(this, item.binId, isActive)
-        
-        // Opsional: Update juga ke Firebase saat toggle aktif/nonaktif
         saveToFirebase(item.copy(isActive = isActive))
         
-        loadBins()
-
         val message = if (isActive) {
             getString(R.string.management_toast_activated, item.lokasi)
         } else {
@@ -97,7 +111,6 @@ class BinManagementActivity : AppCompatActivity() {
             dialogBinding.etThresholdBinForm.setText(existingItem.notifThreshold.toString())
             dialogBinding.switchAktifBinForm.isChecked = existingItem.isActive
         } else {
-            // Default threshold untuk tong baru
             dialogBinding.etThresholdBinForm.setText("90")
             dialogBinding.switchAktifBinForm.isChecked = true
         }
@@ -133,24 +146,16 @@ class BinManagementActivity : AppCompatActivity() {
 
                 when {
                     lokasi.isBlank() -> {
-                        dialogBinding.tilLokasiBinForm.error =
-                            getString(R.string.management_validation_location)
+                        dialogBinding.tilLokasiBinForm.error = getString(R.string.management_validation_location)
                     }
                     binId.isBlank() -> {
-                        dialogBinding.tilBinIdBinForm.error =
-                            getString(R.string.management_validation_bin_id)
-                    }
-                    !TempatSampahLocalStore.isBinIdAvailable(this, binId, existingItem?.binId) -> {
-                        dialogBinding.tilBinIdBinForm.error =
-                            getString(R.string.management_validation_bin_id_duplicate)
+                        dialogBinding.tilBinIdBinForm.error = getString(R.string.management_validation_bin_id)
                     }
                     persentase == null || persentase !in 0..100 -> {
-                        dialogBinding.tilPersentaseBinForm.error =
-                            getString(R.string.management_validation_percentage)
+                        dialogBinding.tilPersentaseBinForm.error = getString(R.string.management_validation_percentage)
                     }
                     threshold == null || threshold !in 0..100 -> {
-                        dialogBinding.tilThresholdBinForm.error =
-                            getString(R.string.management_validation_threshold)
+                        dialogBinding.tilThresholdBinForm.error = getString(R.string.management_validation_threshold)
                     }
                     else -> {
                         val item = TempatSampah(
@@ -160,24 +165,12 @@ class BinManagementActivity : AppCompatActivity() {
                             isActive = dialogBinding.switchAktifBinForm.isChecked,
                             notifThreshold = threshold
                         )
-
-                        // Simpan Lokal
-                        TempatSampahLocalStore.upsert(this, item, existingItem?.binId)
                         
-                        // Simpan Firebase
                         saveToFirebase(item)
-                        
-                        loadBins()
 
                         Toast.makeText(
                             this,
-                            getString(
-                                if (existingItem == null) {
-                                    R.string.management_toast_saved_new
-                                } else {
-                                    R.string.management_toast_saved_edit
-                                }
-                            ),
+                            getString(if (existingItem == null) R.string.management_toast_saved_new else R.string.management_toast_saved_edit),
                             Toast.LENGTH_SHORT
                         ).show()
                         dialog.dismiss()
@@ -185,13 +178,9 @@ class BinManagementActivity : AppCompatActivity() {
                 }
             }
         }
-
         dialog.show()
     }
 
-    /**
-     * Menyimpan atau memperbarui data tong sampah ke Firebase Realtime Database.
-     */
     private fun saveToFirebase(item: TempatSampah) {
         val database = FirebaseDatabase.getInstance("https://samosa-sampah-otomatis-angsau-default-rtdb.asia-southeast1.firebasedatabase.app/")
         val binRef = database.getReference("tempat_sampah").child(item.binId)

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -49,30 +50,31 @@ class DashboardViewModel(
     private val freshnessCheckIntervalMillis = 60 * 1000L
 
     init {
-        loadData()
+        observeData()
         startFreshnessTicker()
     }
 
-    fun loadData() {
-        _uiState.value = _uiState.value?.copy(
-            isLoading = true,
-            errorMessage = null
-        ) ?: DashboardUiState(isLoading = true)
-
+    private fun observeData() {
+        _uiState.value = _uiState.value?.copy(isLoading = true)
         viewModelScope.launch {
-            runCatching {
-                repository.getDaftarTempatSampah()
-            }.onSuccess { bins ->
-                sourceData = bins
-                lastUpdatedAtMillis = System.currentTimeMillis()
-                publishState()
-            }.onFailure {
-                _uiState.value = (_uiState.value ?: DashboardUiState()).copy(
-                    isLoading = false,
-                    errorMessage = it.message ?: "Gagal memuat data monitor."
-                )
-            }
+            repository.getDaftarTempatSampahRealtime()
+                .catch { e ->
+                    _uiState.value = (_uiState.value ?: DashboardUiState()).copy(
+                        isLoading = false,
+                        errorMessage = e.message ?: "Gagal memuat data monitor."
+                    )
+                }
+                .collect { bins ->
+                    sourceData = bins.filter { it.isActive }
+                    lastUpdatedAtMillis = System.currentTimeMillis()
+                    publishState()
+                }
         }
+    }
+
+    fun loadData() {
+        // Karena ini realtime, loadData bisa dipicu untuk memaksa refresh UI jika perlu
+        publishState()
     }
 
     fun updateSearchQuery(query: String) {

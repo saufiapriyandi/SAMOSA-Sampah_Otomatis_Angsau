@@ -5,19 +5,19 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updatePadding
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sdn4angsau.samosa.databinding.ActivityDashboardBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -26,15 +26,12 @@ class DashboardActivity : AppCompatActivity() {
     private var hasResumedOnce = false
 
     private val viewModel: DashboardViewModel by viewModels {
-        DashboardViewModel.Factory(MockTempatSampahRepository(applicationContext))
+        DashboardViewModel.Factory(FirebaseTempatSampahRepository())
     }
 
     private var lastHandledDataVersion: Long = 0L
     private var latestBinsForNotification: List<TempatSampah> = emptyList()
     private var hasRequestedNotificationPermission = false
-
-    private var dataFirebaseAsli: TempatSampah? = null
-    private var dataDummySaatIni: List<TempatSampah> = emptyList()
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -46,10 +43,20 @@ class DashboardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         
-        // Mematikan Edge-to-Edge sementara untuk memperbaiki masalah layar hitam di API 35/36
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Membuat ikon status bar (jam, baterai) tetap putih agar header hijau terlihat full
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val extraPadding = (12 * resources.displayMetrics.density).toInt()
+            binding.topBar.updatePadding(top = systemBars.top + extraPadding)
+            insets
+        }
 
         // Memastikan latar belakang jendela solid putih
         window.setBackgroundDrawableResource(android.R.color.white)
@@ -79,37 +86,6 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         observeUiState()
-        setupFirebaseRealtimeLog()
-    }
-
-    private fun perbaruiTampilanList() {
-        val listGabungan = mutableListOf<TempatSampah>()
-        dataFirebaseAsli?.let { listGabungan.add(it) }
-        listGabungan.addAll(dataDummySaatIni)
-        sampahAdapter.submitList(listGabungan)
-    }
-
-    private fun setupFirebaseRealtimeLog() {
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference("Tempat_Sampah_1")
-
-        myRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    val kapasitasDalam = snapshot.child("kapasitas_persen").getValue(Int::class.java) ?: 0
-                    dataFirebaseAsli = TempatSampah(
-                        binId = "Tempat_Sampah_1",
-                        lokasi = "Alat SAMOSA Asli",
-                        persentase = kapasitasDalam
-                    )
-                    perbaruiTampilanList()
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("SAMOSA_IOT", "Gagal terhubung ke Firebase: ${error.message}")
-            }
-        })
     }
 
     override fun onResume() {
@@ -143,10 +119,9 @@ class DashboardActivity : AppCompatActivity() {
             binding.tvEmptyState.visibility = if (state.emptyState != DashboardEmptyState.NONE && state.errorMessage == null && !state.isLoading) View.VISIBLE else View.GONE
             binding.rvTempatSampah.visibility = if (state.errorMessage == null && !state.isLoading && state.visibleBins.isNotEmpty()) View.VISIBLE else View.GONE
 
-            dataDummySaatIni = state.visibleBins
-            perbaruiTampilanList()
+            sampahAdapter.submitList(state.visibleBins)
 
-            latestBinsForNotification = TempatSampahLocalStore.getAll(this)
+            latestBinsForNotification = state.allBins
             if (state.dataVersion != 0L && state.dataVersion != lastHandledDataVersion) {
                 lastHandledDataVersion = state.dataVersion
                 handleNotifications(state.allBins)
@@ -155,11 +130,10 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun handleNotifications(bins: List<TempatSampah>) {
-        val configuredBins = TempatSampahLocalStore.getAll(this)
-        if (configuredBins.isEmpty()) return
+        if (bins.isEmpty()) return
         val hasFullBins = bins.any { it.isFull }
         if (!hasFullBins) {
-            TempatSampahNotificationHelper.syncNotifications(this, configuredBins)
+            TempatSampahNotificationHelper.syncNotifications(this, bins)
             return
         }
         val notificationPermissionGranted = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
@@ -171,7 +145,7 @@ class DashboardActivity : AppCompatActivity() {
             }
             return
         }
-        TempatSampahNotificationHelper.syncNotifications(this, configuredBins)
+        TempatSampahNotificationHelper.syncNotifications(this, bins)
     }
 
     private fun openDetail(item: TempatSampah) {

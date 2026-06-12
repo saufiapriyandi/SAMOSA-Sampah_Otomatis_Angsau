@@ -71,7 +71,7 @@ object TempatSampahLocalStore {
         }
     }
 
-    private fun saveAll(context: Context, bins: List<TempatSampah>) {
+    fun saveAll(context: Context, bins: List<TempatSampah>) {
         val prefs = context.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         val jsonArray = JSONArray()
 
@@ -113,11 +113,7 @@ object TempatSampahLocalStore {
 
     private fun defaultBins(): List<TempatSampah> {
         return listOf(
-            TempatSampah("3", "Laboratorium", 100, true, 90),
-            TempatSampah("4", "Ruang Kantor", 95, true, 90),
-            TempatSampah("5", "Kantin SDN 4", 78, true, 90),
-            TempatSampah("1", "Perpustakaan", 45, true, 90),
-            TempatSampah("2", "Ruang Guru", 12, true, 90)
+            TempatSampah("Tempat_Sampah_1", "Alat SAMOSA Asli", 0, true, 90)
         )
     }
 }
