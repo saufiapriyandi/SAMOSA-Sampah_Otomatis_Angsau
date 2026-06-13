@@ -168,4 +168,45 @@
     <string name="cd_dashboard_search_icon">Ikon pencarian</string>
     <string name="cd_dashboard_monitor_icon">Ikon status monitor</string>
     <string name="cd_bin_icon">Ikon tempat sampah</string>
+
+    <!-- Device Setup / Bluetooth -->
+    <string name="profile_device_setup_button">Pengaturan Perangkat</string>
+    <string name="device_setup_title">Pengaturan Perangkat</string>
+    <string name="device_setup_step1_label">LANGKAH 1</string>
+    <string name="device_setup_step1_title">Hubungkan Bluetooth</string>
+    <string name="device_setup_step2_label">LANGKAH 2</string>
+    <string name="device_setup_step2_title">Kirim Kredensial WiFi</string>
+    <string name="device_setup_step2_desc">Masukkan nama jaringan dan kata sandi WiFi yang akan digunakan oleh perangkat ESP32.</string>
+    <string name="device_setup_status_label">Status Koneksi</string>
+    <string name="device_setup_status_connected">Terhubung</string>
+    <string name="device_setup_status_disconnected">Belum Terhubung</string>
+    <string name="device_setup_scan_button">Pindai Perangkat Bluetooth</string>
+    <string name="device_setup_change_device">Ganti Perangkat</string>
+    <string name="device_setup_connected_to">Terhubung ke: %1$s</string>
+    <string name="device_setup_connected_success">Berhasil terhubung ke %1$s</string>
+    <string name="device_setup_connecting">Menghubungkan ke %1$s…</string>
+    <string name="device_setup_connection_failed">Gagal terhubung. Pastikan perangkat dalam jangkauan dan coba lagi.</string>
+    <string name="device_setup_not_connected">Bluetooth belum terhubung. Hubungkan perangkat terlebih dahulu.</string>
+    <string name="device_setup_ssid_hint">Nama WiFi (SSID)</string>
+    <string name="device_setup_password_hint">Kata Sandi WiFi</string>
+    <string name="device_setup_ssid_empty">Nama WiFi tidak boleh kosong.</string>
+    <string name="device_setup_password_empty">Kata sandi WiFi tidak boleh kosong.</string>
+    <string name="device_setup_send_button">Kirim ke Alat</string>
+    <string name="device_setup_sending">Mengirim kredensial WiFi…</string>
+    <string name="device_setup_sent_success">Kredensial WiFi berhasil dikirim. Menunggu respons…</string>
+    <string name="device_setup_send_failed">Gagal mengirim. Periksa koneksi Bluetooth.</string>
+    <string name="device_setup_wifi_connected">WiFi berhasil terhubung pada perangkat!</string>
+    <string name="device_setup_auto_disconnect">Bluetooth diputus otomatis setelah konfigurasi selesai.</string>
+    <string name="device_setup_bt_not_supported">Perangkat ini tidak mendukung Bluetooth.</string>
+    <string name="device_setup_bt_disabled">Bluetooth tidak aktif. Aktifkan Bluetooth terlebih dahulu.</string>
+    <string name="device_setup_permission_denied">Izin Bluetooth diperlukan untuk memindai perangkat.</string>
+    <string name="device_setup_dialog_title">Pilih Perangkat</string>
+    <string name="device_setup_dialog_subtitle">Pilih perangkat ESP32 untuk dihubungkan</string>
+    <string name="device_setup_scanning">Memindai perangkat…</string>
+    <string name="device_setup_empty_state">Tidak ada perangkat ditemukan.\nPastikan perangkat ESP32 menyala.</string>
+    <string name="device_setup_placeholder">Hubungkan Bluetooth terlebih dahulu untuk mengirim kredensial WiFi.</string>
+    <string name="device_setup_refresh_cd">Pindai ulang</string>
+    <string name="device_setup_cd_bt_icon">Ikon Bluetooth</string>
+    <string name="device_setup_cd_wifi_icon">Ikon WiFi</string>
+    <string name="device_setup_cd_device_icon">Ikon perangkat</string>
 </resources>

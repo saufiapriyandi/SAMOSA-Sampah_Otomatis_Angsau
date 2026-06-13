@@ -16,4 +16,12 @@
     <color name="red_warning">#FF4B4B</color>
     <color name="red_surface">#FFF1F1</color>
     <color name="red_outline">#FFD0D0</color>
+
+    <!-- Bluetooth / Device Setup -->
+    <color name="bt_connected_green">#4CAF50</color>
+    <color name="bt_connected_surface">#E8F5E9</color>
+    <color name="bt_disconnected_red">#FF4B4B</color>
+    <color name="bt_disconnected_surface">#FFF1F1</color>
+    <color name="bt_blue_primary">#5C6BC0</color>
+    <color name="bt_blue_surface">#E8EAF6</color>
 </resources>

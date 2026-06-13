@@ -64,6 +64,10 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(Intent(this, BinManagementActivity::class.java))
         }
 
+        binding.btnDeviceSetupProfile.setOnClickListener {
+            startActivity(Intent(this, DeviceSetupActivity::class.java))
+        }
+
         binding.btnReportProfile.setOnClickListener {
             startActivity(Intent(this, ReportActivity::class.java))
         }
