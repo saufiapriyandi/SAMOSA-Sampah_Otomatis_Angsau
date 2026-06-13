@@ -1,0 +1,87 @@
+erDiagram
+    AKUN ||--|| PROFIL : memiliki
+    AKUN ||--o{ LAPORAN : membuat
+    AKUN ||--o{ NOTIFIKASI : menerima
+    TEMPAT_SAMPAH ||--o{ SENSOR : dipasang
+    SENSOR ||--o{ DATA_SENSOR : mencatat
+    TEMPAT_SAMPAH ||--o{ DATA_SENSOR : memiliki_histori
+    TEMPAT_SAMPAH ||--o{ NOTIFIKASI : memicu
+    LAPORAN ||--o{ DETAIL_LAPORAN : memiliki
+    TEMPAT_SAMPAH ||--o{ DETAIL_LAPORAN : direkap
+
+    AKUN {
+        int id_akun PK
+        varchar username
+        varchar email
+        varchar password
+        varchar provider_login
+        datetime created_at
+    }
+
+    PROFIL {
+        int id_profil PK
+        int id_akun FK
+        varchar nama
+        varchar jabatan
+        varchar no_hp
+        text alamat
+    }
+
+    TEMPAT_SAMPAH {
+        int id_tempat_sampah PK
+        varchar kode_bin
+        varchar lokasi
+        int kapasitas_persen
+        enum status
+        boolean is_active
+        datetime created_at
+    }
+
+    SENSOR {
+        int id_sensor PK
+        int id_tempat_sampah FK
+        varchar jenis_sensor
+        varchar status_sensor
+        varchar posisi_sensor
+    }
+
+    DATA_SENSOR {
+        int id_data_sensor PK
+        int id_sensor FK
+        int id_tempat_sampah FK
+        int persentase_sampah
+        int jarak_cm
+        varchar status_tutup
+        datetime waktu_baca
+        enum status_bin
+    }
+
+    NOTIFIKASI {
+        int id_notifikasi PK
+        int id_akun FK
+        int id_tempat_sampah FK
+        varchar judul
+        text pesan
+        enum jenis_notifikasi
+        enum status_baca
+        datetime waktu_kirim
+    }
+
+    LAPORAN {
+        int id_laporan PK
+        int id_akun FK
+        enum periode
+        date tanggal_laporan
+        int total_kejadian_penuh
+        int jumlah_tempat_terdampak
+        text insight
+        text keterangan
+    }
+
+    DETAIL_LAPORAN {
+        int id_detail_laporan PK
+        int id_laporan FK
+        int id_tempat_sampah FK
+        int jumlah_penuh
+        varchar jam_rawan
+    }
