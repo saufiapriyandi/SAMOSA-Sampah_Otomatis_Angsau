@@ -74,6 +74,12 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- HALAMAN RIWAYAT DIDAFTARKAN DI SINI -->
+        <activity
+            android:name=".RiwayatActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
