@@ -44,7 +44,7 @@ import java.util.UUID;
 
 /**
  * Fragment untuk pengaturan perangkat ESP32 via Bluetooth Classic (SPP).
- * Memungkinkan user memindai, menghubungkan, dan mengirim kredensial WiFi ke ESP32.
+ * Memungkinkan user memindai, menghubungkan, mengirim kredensial WiFi, & Kustomisasi Teks LCD ke ESP32.
  */
 public class DeviceSetupFragment extends Fragment {
 
@@ -167,6 +167,12 @@ public class DeviceSetupFragment extends Fragment {
 
         // Tombol kirim WiFi
         binding.btnSendWifi.setOnClickListener(v -> sendWifiCredentials());
+
+        // Tombol kirim kustomisasi teks LCD
+        binding.btnSendLcd.setOnClickListener(v -> sendLcdText());
+
+        // Tombol reset teks LCD
+        binding.btnResetLcd.setOnClickListener(v -> resetLcdText());
     }
 
     // =========================================================================
@@ -433,7 +439,7 @@ public class DeviceSetupFragment extends Fragment {
                         ContextCompat.getColor(requireContext(), R.color.green_dark));
             }
 
-            // Tampilkan Step 2
+            // Tampilkan Step 2 (dan Step 3 karena berada di layout yang sama)
             binding.layoutStep2.setVisibility(View.VISIBLE);
             binding.layoutStep2Placeholder.setVisibility(View.GONE);
             binding.btnScanBluetooth.setText(R.string.device_setup_change_device);
@@ -445,7 +451,7 @@ public class DeviceSetupFragment extends Fragment {
             binding.ivBluetoothIcon.setImageResource(R.drawable.ic_bluetooth);
             binding.tvDeviceName.setVisibility(View.GONE);
 
-            // Sembunyikan Step 2
+            // Sembunyikan Step 2 & 3
             binding.layoutStep2.setVisibility(View.GONE);
             binding.layoutStep2Placeholder.setVisibility(View.VISIBLE);
             binding.btnScanBluetooth.setText(R.string.device_setup_scan_button);
@@ -522,6 +528,124 @@ public class DeviceSetupFragment extends Fragment {
                         binding.tvSendStatus.setTextColor(
                                 ContextCompat.getColor(requireContext(), R.color.red_warning));
                         binding.btnSendWifi.setEnabled(true);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    // =========================================================================
+    // SEND CUSTOM LCD TEXT
+    // =========================================================================
+
+    private void sendLcdText() {
+        if (binding == null) return;
+
+        // Mendeklarasikan variabel sebagai final secara langsung menggunakan ternary operator
+        final String teksBaris1 = binding.etLcdBaris1.getText() != null ? binding.etLcdBaris1.getText().toString() : "";
+        final String teksBaris2 = binding.etLcdBaris2.getText() != null ? binding.etLcdBaris2.getText().toString() : "";
+
+        // Cek jika kedua kolom kosong
+        if (teksBaris1.isEmpty() && teksBaris2.isEmpty()) {
+            Toast.makeText(requireContext(), "Teks LCD tidak boleh kosong", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (outputStream == null) {
+            Toast.makeText(requireContext(), getString(R.string.device_setup_not_connected), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        binding.btnSendLcd.setEnabled(false);
+
+        // Gunakan format L1:[Teks] dan L2:[Teks] agar bisa dibaca oleh ESP32 kita
+        new Thread(() -> {
+            try {
+                // Kirim Teks Baris 1
+                if (!teksBaris1.isEmpty()) {
+                    String dataL1 = "L1:" + teksBaris1 + "\n";
+                    outputStream.write(dataL1.getBytes());
+                    outputStream.flush();
+                    Thread.sleep(150); // Jeda singkat agar ESP32 tidak bingung membaca serialnya
+                }
+
+                // Kirim Teks Baris 2
+                if (!teksBaris2.isEmpty()) {
+                    String dataL2 = "L2:" + teksBaris2 + "\n";
+                    outputStream.write(dataL2.getBytes());
+                    outputStream.flush();
+                }
+
+                mainHandler.post(() -> {
+                    if (binding != null) {
+                        Toast.makeText(requireContext(), "Sukses: Tampilan LCD berhasil diperbarui!", Toast.LENGTH_SHORT).show();
+                        binding.btnSendLcd.setEnabled(true);
+
+                        // Kosongkan form kembali setelah berhasil dikirim
+                        binding.etLcdBaris1.setText("");
+                        binding.etLcdBaris2.setText("");
+                    }
+                });
+
+            } catch (IOException | InterruptedException e) {
+                Log.e(TAG, "Gagal mengirim data Teks LCD", e);
+                mainHandler.post(() -> {
+                    if (binding != null) {
+                        Toast.makeText(requireContext(), "Gagal: Periksa koneksi Bluetooth", Toast.LENGTH_SHORT).show();
+                        binding.btnSendLcd.setEnabled(true);
+                    }
+                });
+            }
+        }).start();
+    }
+
+    // =========================================================================
+    // RESET CUSTOM LCD TEXT
+    // =========================================================================
+
+    private void resetLcdText() {
+        if (binding == null) return;
+
+        if (outputStream == null) {
+            Toast.makeText(requireContext(), getString(R.string.device_setup_not_connected), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        binding.btnResetLcd.setEnabled(false);
+
+        new Thread(() -> {
+            try {
+                // Teks template awal (ditambahkan spasi di belakang agar total 16 karakter
+                // untuk menimpa sisa huruf dari teks sebelumnya yang mungkin lebih panjang)
+
+                // Baris 1: "SAMOSA" (6 huruf + 10 spasi = 16 karakter)
+                String defaultL1 = "L1:SAMOSA          \n";
+                outputStream.write(defaultL1.getBytes());
+                outputStream.flush();
+                Thread.sleep(150); // Jeda agar ESP32 tidak bingung membaca data serial
+
+                // Baris 2: "SDN 4 Angsau" (12 huruf + 4 spasi = 16 karakter)
+                String defaultL2 = "L2:SDN 4 Angsau    \n";
+                outputStream.write(defaultL2.getBytes());
+                outputStream.flush();
+
+                mainHandler.post(() -> {
+                    if (binding != null) {
+                        Toast.makeText(requireContext(), "Sukses: Layar LCD dikembalikan ke template awal!", Toast.LENGTH_SHORT).show();
+
+                        // Kosongkan form isian di aplikasi HP
+                        binding.etLcdBaris1.setText("");
+                        binding.etLcdBaris2.setText("");
+                        binding.btnResetLcd.setEnabled(true);
+                    }
+                });
+
+            } catch (IOException | InterruptedException e) {
+                Log.e(TAG, "Gagal mereset Teks LCD", e);
+                mainHandler.post(() -> {
+                    if (binding != null) {
+                        Toast.makeText(requireContext(), "Gagal: Periksa koneksi Bluetooth", Toast.LENGTH_SHORT).show();
+                        binding.btnResetLcd.setEnabled(true);
                     }
                 });
             }
