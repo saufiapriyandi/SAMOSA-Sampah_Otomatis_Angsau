@@ -1,109 +1,80 @@
 package com.example.sdn4angsau.samosa
 
-import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sdn4angsau.samosa.databinding.ActivityRiwayatBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-
-// Model Data untuk Log
-data class LogSamosa(
-    val pesan: String = "",
-    val waktu: String = "",
-    val tipe: String = "info"
-)
-
-// Adapter untuk RecyclerView
-class LogAdapter(private val logList: List<LogSamosa>) : RecyclerView.Adapter<LogAdapter.LogViewHolder>() {
-    class LogViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvPesan: TextView = view.findViewById(R.id.tvLogPesan)
-        val tvWaktu: TextView = view.findViewById(R.id.tvLogWaktu)
-        val dotStatus: CardView = view.findViewById(R.id.dotStatus)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_log, parent, false)
-        return LogViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: LogViewHolder, position: Int) {
-        val log = logList[position]
-        holder.tvPesan.text = log.pesan
-        holder.tvWaktu.text = log.waktu
-
-        val warnaTitik = when (log.tipe) {
-            "warning" -> "#FFA500" // Orange (Terbuka)
-            "success" -> "#20B273" // Hijau (Tertutup)
-            else -> "#5C6BC0" // Ungu/Biru (Bawaan)
-        }
-        holder.dotStatus.setCardBackgroundColor(Color.parseColor(warnaTitik))
-    }
-
-    override fun getItemCount(): Int = logList.size
-}
 
 class RiwayatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRiwayatBinding
-    private val listRiwayat = mutableListOf<LogSamosa>()
-    private lateinit var logAdapter: LogAdapter
+    private lateinit var database: DatabaseReference
+    private lateinit var adapter: RiwayatAdapter
+    private val logList = mutableListOf<LogItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         binding = ActivityRiwayatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Setup Window Insets (Padding Status Bar agar tidak tertutup notch)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            binding.headerRiwayatBar.updatePadding(top = systemBars.top + 16)
+            val extraTopPadding = (12 * resources.displayMetrics.density).toInt()
+            binding.headerRiwayatBar.updatePadding(top = systemBars.top + extraTopPadding)
             insets
         }
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
+        // Setup RecyclerView
+        adapter = RiwayatAdapter(logList)
+        binding.rvFullRiwayat.layoutManager = LinearLayoutManager(this)
+        binding.rvFullRiwayat.adapter = adapter
+
+        // Hubungkan ke folder "Logs" di Firebase
+        database = FirebaseDatabase.getInstance().getReference("Logs")
+
+        // Tombol Kembali
         binding.btnBackRiwayat.setOnClickListener { finish() }
 
-        // Mengambil Nama Profil (Gunakan "Kepala Sekolah" sebagai default jika kosong)
-        val sharedPref = getSharedPreferences("SamosaPrefs", Context.MODE_PRIVATE)
+        // Tombol Hapus Semua Log
+        binding.btnHapusLog.setOnClickListener { hapusSemuaRiwayat() }
 
-        // Catatan: Pastikan "USER_NAME" ini adalah kunci yang sama dengan saat Anda menyimpan profil
-        val namaProfil = sharedPref.getString("USER_NAME", "Kepala Sekolah")
-        binding.tvHaloNama.text = "Halo, $namaProfil"
+        muatDataRiwayat()
+    }
 
-        logAdapter = LogAdapter(listRiwayat)
-        binding.rvFullRiwayat.adapter = logAdapter
-
-        // Tarik data dari Firebase
-        val dbRef = FirebaseDatabase.getInstance().getReference("Logs")
-
-        dbRef.orderByKey().limitToLast(50).addValueEventListener(object : ValueEventListener {
+    private fun muatDataRiwayat() {
+        database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                listRiwayat.clear()
-                for (logSnapshot in snapshot.children) {
-                    val pesan = logSnapshot.child("pesan").getValue(String::class.java) ?: ""
-                    val waktu = logSnapshot.child("waktu").getValue(String::class.java) ?: ""
-                    val tipe = logSnapshot.child("tipe").getValue(String::class.java) ?: "info"
+                logList.clear()
 
-                    listRiwayat.add(0, LogSamosa(pesan, waktu, tipe))
+                for (data in snapshot.children) {
+                    val item = data.getValue(LogItem::class.java)
+                    if (item != null) {
+                        logList.add(item.copy(id = data.key ?: ""))
+                    }
                 }
-                logAdapter.notifyDataSetChanged()
 
-                // Cek apakah data kosong untuk menampilkan Empty State
-                if (listRiwayat.isEmpty()) {
+                // Urutkan data berdasarkan timestamp terbaru (menurun)
+                logList.sortByDescending { it.timestamp }
+                adapter.notifyDataSetChanged()
+
+                // Logika Tampilan Kosong (Empty State)
+                if (logList.isEmpty()) {
                     binding.rvFullRiwayat.visibility = View.GONE
                     binding.layoutEmptyState.visibility = View.VISIBLE
                 } else {
@@ -111,14 +82,24 @@ class RiwayatActivity : AppCompatActivity() {
                     binding.layoutEmptyState.visibility = View.GONE
                 }
             }
-            override fun onCancelled(error: DatabaseError) {}
-        })
 
-        // Tombol Hapus Log
-        binding.btnHapusLog.setOnClickListener {
-            dbRef.removeValue().addOnSuccessListener {
-                Toast.makeText(this, "Riwayat berhasil dihapus", Toast.LENGTH_SHORT).show()
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@RiwayatActivity, "Gagal memuat data: ${error.message}", Toast.LENGTH_SHORT).show()
             }
+        })
+    }
+
+    private fun hapusSemuaRiwayat() {
+        if (logList.isNotEmpty()) {
+            database.removeValue().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Seluruh riwayat berhasil dihapus", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Gagal menghapus riwayat", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            Toast.makeText(this, "Riwayat sudah kosong", Toast.LENGTH_SHORT).show()
         }
     }
 }
