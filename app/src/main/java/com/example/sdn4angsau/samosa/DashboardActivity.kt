@@ -1,54 +1,39 @@
 package com.example.sdn4angsau.samosa
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
-import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sdn4angsau.samosa.databinding.ActivityDashboardBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class DashboardActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardBinding
     private lateinit var sampahAdapter: TempatSampahAdapter
-    private var hasResumedOnce = false
-
-    private val viewModel: DashboardViewModel by viewModels {
-        DashboardViewModel.Factory(FirebaseTempatSampahRepository())
-    }
-
-    private var lastHandledDataVersion: Long = 0L
-    private var latestBinsForNotification: List<TempatSampah> = emptyList()
-    private var hasRequestedNotificationPermission = false
-
-    private val notificationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        if (granted) {
-            TempatSampahNotificationHelper.syncNotifications(this, latestBinsForNotification)
-        }
-    }
+    private lateinit var database: DatabaseReference
+    private var listSampah = mutableListOf<TempatSampah>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
+
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Membuat ikon status bar (jam, baterai) tetap putih agar header hijau terlihat full
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
@@ -58,10 +43,7 @@ class DashboardActivity : AppCompatActivity() {
             insets
         }
 
-        // Memastikan latar belakang jendela solid putih
         window.setBackgroundDrawableResource(android.R.color.white)
-
-        // Menyembunyikan komponen status bar buatan yang mungkin menyebabkan glitch layout
         binding.fakeStatusBar.visibility = View.GONE
 
         sampahAdapter = TempatSampahAdapter(::openDetail)
@@ -69,83 +51,69 @@ class DashboardActivity : AppCompatActivity() {
         binding.rvTempatSampah.adapter = sampahAdapter
 
         binding.btnProfile.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
-        }
-
-        binding.btnRetryDashboard.setOnClickListener {
-            viewModel.loadData()
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
 
         binding.btnRefreshDashboard.setOnClickListener {
-            viewModel.loadData()
+            mulaiPantauFirebaseRealtime()
         }
 
-        binding.etSearch.doAfterTextChanged { editable ->
-            viewModel.updateSearchQuery(editable?.toString().orEmpty())
-        }
-
-        observeUiState()
+        database = FirebaseDatabase.getInstance().reference
+        mulaiPantauFirebaseRealtime()
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (hasResumedOnce) {
-            viewModel.loadData()
-        } else {
-            hasResumedOnce = true
-        }
-    }
+    private fun mulaiPantauFirebaseRealtime() {
+        binding.progressDashboard.visibility = View.VISIBLE
+        binding.rvTempatSampah.visibility = View.GONE
 
-    private fun observeUiState() {
-        viewModel.uiState.observe(this) { state ->
-            binding.progressDashboard.visibility = if (state.isLoading) View.VISIBLE else View.GONE
-            binding.btnRefreshDashboard.isEnabled = !state.isLoading
+        database.child("Tempat_Sampah_1").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val kapasitas = snapshot.child("kapasitas_persen").getValue(Int::class.java)
+                    ?: snapshot.child("kapasitas_persen").getValue(Long::class.java)?.toInt()
+                    ?: 0
 
-            binding.cardErrorState.visibility = if (state.errorMessage != null) View.VISIBLE else View.GONE
-            binding.tvErrorMessage.text = state.errorMessage ?: getString(R.string.dashboard_error_message_default)
+                val waktuSekarang = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("id", "ID"))
+                    .format(Calendar.getInstance().time)
+                binding.tvLastUpdate.text = "UPDATE: $waktuSekarang"
 
-            binding.tvSummaryTotalValue.text = state.totalCount.toString()
-            binding.tvSummaryFullValue.text = state.fullCount.toString()
-            binding.tvSummarySafeValue.text = state.safeCount.toString()
+                val sampahTerbaru = TempatSampah(
+                    binId = "Tempat_Sampah_1",
+                    lokasi = "Tempat Sampah SAMOSA",
+                    persentase = kapasitas,
+                    isActive = true,
+                    notifThreshold = 90
+                )
 
-            binding.tvLastUpdate.text = if (state.lastUpdatedLabel.isBlank()) {
-                getString(R.string.dashboard_update_placeholder)
-            } else {
-                getString(R.string.dashboard_update_format, state.lastUpdatedLabel)
+                listSampah.clear()
+                listSampah.add(sampahTerbaru)
+                sampahAdapter.submitList(listSampah.toList())
+
+                val total = listSampah.size
+                val penuh = listSampah.count { it.persentase >= 60 }
+                val aman = total - penuh
+
+                binding.tvSummaryTotalValue.text = total.toString()
+                binding.tvSummaryFullValue.text = penuh.toString()
+                binding.tvSummarySafeValue.text = aman.toString()
+
+                if (penuh > 0) {
+                    binding.cardWarning.visibility = View.VISIBLE
+                    binding.tvWarningMessage.text = "Terdapat $penuh tempat sampah yang memerlukan perhatian segera!"
+                } else {
+                    binding.cardWarning.visibility = View.GONE
+                }
+
+                binding.progressDashboard.visibility = View.GONE
+                binding.rvTempatSampah.visibility = View.VISIBLE
+                binding.cardErrorState.visibility = View.GONE
             }
 
-            binding.cardWarning.visibility = if (!state.isLoading && state.errorMessage == null && state.showWarning) View.VISIBLE else View.GONE
-            binding.tvEmptyState.visibility = if (state.emptyState != DashboardEmptyState.NONE && state.errorMessage == null && !state.isLoading) View.VISIBLE else View.GONE
-            binding.rvTempatSampah.visibility = if (state.errorMessage == null && !state.isLoading && state.visibleBins.isNotEmpty()) View.VISIBLE else View.GONE
-
-            sampahAdapter.submitList(state.visibleBins)
-
-            latestBinsForNotification = state.allBins
-            if (state.dataVersion != 0L && state.dataVersion != lastHandledDataVersion) {
-                lastHandledDataVersion = state.dataVersion
-                handleNotifications(state.allBins)
+            override fun onCancelled(error: DatabaseError) {
+                binding.progressDashboard.visibility = View.GONE
+                binding.cardErrorState.visibility = View.VISIBLE
+                binding.tvErrorMessage.text = error.message
             }
-        }
-    }
-
-    private fun handleNotifications(bins: List<TempatSampah>) {
-        if (bins.isEmpty()) return
-        val hasFullBins = bins.any { it.isFull }
-        if (!hasFullBins) {
-            TempatSampahNotificationHelper.syncNotifications(this, bins)
-            return
-        }
-        val notificationPermissionGranted = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
-        if (!notificationPermissionGranted) {
-            if (!hasRequestedNotificationPermission) {
-                hasRequestedNotificationPermission = true
-                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-            return
-        }
-        TempatSampahNotificationHelper.syncNotifications(this, bins)
+        })
     }
 
     private fun openDetail(item: TempatSampah) {

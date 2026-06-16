@@ -44,6 +44,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/btnBack" />
+
+        <ImageView
+            android:id="@+id/btnToggleNotification"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_notifications"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#FFFFFF" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -158,25 +173,27 @@
                     android:layout_marginTop="16dp"
                     android:weightSum="2">
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnResetLcd"
                         android:layout_width="0dp"
-                        android:layout_height="50dp"
+                        android:layout_height="56dp"
                         android:layout_weight="0.8"
                         android:layout_marginEnd="8dp"
-                        android:backgroundTint="#FF4B4B"
+                        app:backgroundTint="#FF4B4B"
+                        app:cornerRadius="16dp"
                         android:text="Reset"
                         android:textAllCaps="false"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSendLcd"
                         android:layout_width="0dp"
-                        android:layout_height="50dp"
+                        android:layout_height="56dp"
                         android:layout_weight="1.2"
-                        android:background="@drawable/bg_send_button"
+                        app:backgroundTint="@color/green_primary"
+                        app:cornerRadius="16dp"
                         android:text="Kirim Teks"
                         android:textAllCaps="false"
                         android:textColor="#FFFFFF"
@@ -286,17 +303,17 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnScanBluetooth"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_scan_button"
-                android:drawableStart="@drawable/ic_bluetooth"
-                android:drawableTint="#FFFFFF"
-                android:drawablePadding="12dp"
-                android:gravity="center"
-                android:paddingHorizontal="24dp"
+                app:backgroundTint="@color/green_primary"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_bluetooth"
+                app:iconGravity="textStart"
+                app:iconPadding="12dp"
+                app:iconTint="#FFFFFF"
                 android:text="@string/device_setup_scan_button"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
@@ -400,18 +417,18 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSendWifi"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="32dp"
-                    android:background="@drawable/bg_send_button"
-                    android:drawableStart="@drawable/ic_wifi_send"
-                    android:drawablePadding="12dp"
-                    android:drawableTint="#FFFFFF"
-                    android:gravity="center"
-                    android:paddingHorizontal="24dp"
+                    app:backgroundTint="@color/green_primary"
+                    app:cornerRadius="16dp"
+                    app:icon="@drawable/ic_wifi_send"
+                    app:iconGravity="textStart"
+                    app:iconPadding="12dp"
+                    app:iconTint="#FFFFFF"
                     android:text="@string/device_setup_send_button"
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
@@ -427,7 +444,6 @@
                     android:textColor="#888888"
                     android:textSize="13sp"
                     android:visibility="gone" />
-
             </LinearLayout>
 
             <LinearLayout

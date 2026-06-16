@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ import java.util.UUID;
  * Fragment untuk pengaturan perangkat ESP32.
  * Step 1 & 2: Via Bluetooth Classic (SPP) untuk kirim kredensial WiFi.
  * Kustomisasi LCD: Via Firebase (Online / Independen).
+ * Pengaturan: Toggle Notifikasi (Menghidupkan/Mematikan peringatan).
  */
 public class DeviceSetupFragment extends Fragment {
 
@@ -142,10 +144,12 @@ public class DeviceSetupFragment extends Fragment {
     }
 
     private void setupUI() {
+        // Tombol Kembali
         binding.btnBack.setOnClickListener(v -> {
             if (getActivity() != null) getActivity().finish();
         });
 
+        // Tombol Scan Bluetooth
         binding.btnScanBluetooth.setOnClickListener(v -> {
             if (bluetoothAdapter == null) {
                 Toast.makeText(requireContext(), getString(R.string.device_setup_bt_not_supported), Toast.LENGTH_SHORT).show();
@@ -158,11 +162,44 @@ public class DeviceSetupFragment extends Fragment {
             checkPermissionsAndScan();
         });
 
+        // Tombol Kirim WiFi
         binding.btnSendWifi.setOnClickListener(v -> sendWifiCredentials());
 
         // Tombol LCD via Firebase
         binding.btnSendLcd.setOnClickListener(v -> sendLcdTextViaFirebase());
         binding.btnResetLcd.setOnClickListener(v -> resetLcdTextViaFirebase());
+
+        // ===============================================
+        // LOGIKA TOMBOL NOTIFIKASI ON/OFF (Kanan Atas)
+        // ===============================================
+        SharedPreferences prefs = requireContext().getSharedPreferences("SAMOSA_PREFS", Context.MODE_PRIVATE);
+        // Menggunakan array final 1 elemen agar bisa diakses & diubah di dalam lambda
+        final boolean[] isNotifEnabled = {prefs.getBoolean("NOTIF_ENABLED", true)};
+
+        // Atur tampilan awal ikon lonceng sesuai status terakhir yang tersimpan
+        updateNotificationIcon(isNotifEnabled[0]);
+
+        binding.btnToggleNotification.setOnClickListener(v -> {
+            isNotifEnabled[0] = !isNotifEnabled[0]; // Balikkan status (on -> off, off -> on)
+            prefs.edit().putBoolean("NOTIF_ENABLED", isNotifEnabled[0]).apply(); // Simpan ke memori HP
+
+            updateNotificationIcon(isNotifEnabled[0]);
+
+            String pesan = isNotifEnabled[0] ? "Notifikasi Latar Belakang Diaktifkan" : "Notifikasi Dimatikan";
+            Toast.makeText(requireContext(), pesan, Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    // Mengubah tampilan ikon lonceng jika mati/hidup
+    private void updateNotificationIcon(boolean enabled) {
+        if (binding == null) return;
+        if (enabled) {
+            // Jika hidup: Ikon menyala solid
+            binding.btnToggleNotification.setAlpha(1.0f);
+        } else {
+            // Jika mati: Ikon menjadi transparan redup
+            binding.btnToggleNotification.setAlpha(0.4f);
+        }
     }
 
     // =========================================================================
@@ -347,7 +384,6 @@ public class DeviceSetupFragment extends Fragment {
                 binding.tvDeviceName.setTextColor(ContextCompat.getColor(requireContext(), R.color.green_dark));
             }
 
-            // HANYA MENGATUR VISIBILITY STEP 2 (WiFi). Step LCD di XML akan dibuat selalu terlihat
             binding.layoutStep2.setVisibility(View.VISIBLE);
             binding.layoutStep2Placeholder.setVisibility(View.GONE);
             binding.btnScanBluetooth.setText(R.string.device_setup_change_device);
