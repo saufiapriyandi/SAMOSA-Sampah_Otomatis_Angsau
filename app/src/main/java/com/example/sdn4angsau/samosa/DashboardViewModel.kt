@@ -73,7 +73,6 @@ class DashboardViewModel(
     }
 
     fun loadData() {
-        // Karena ini realtime, loadData bisa dipicu untuk memaksa refresh UI jika perlu
         publishState()
     }
 

@@ -1,25 +1,28 @@
 package com.example.sdn4angsau.samosa
 
-enum class TempatSampahStatus {
-    AMAN,
-    WASPADA,
-    PENUH
-}
+import com.google.firebase.database.PropertyName
+
+enum class TempatSampahStatus { AMAN, WASPADA, PENUH }
 
 data class TempatSampah(
-    val binId: String,
-    val lokasi: String,
-    val persentase: Int,
-    val isActive: Boolean = true,
-    val notifThreshold: Int = 85
+    var binId: String = "",
+    var lokasi: String = "",
+    var isActive: Boolean = true,
+
+    @get:PropertyName("persentase") @set:PropertyName("persentase")
+    var persentase: Int = 0,
+
+    @get:PropertyName("notifThreshold") @set:PropertyName("notifThreshold")
+    var notifThreshold: Int = 80,
+
+    var jarakSensor: Int = 0
 ) {
     val status: TempatSampahStatus
         get() = when {
-            persentase >= notifThreshold -> TempatSampahStatus.PENUH
-            persentase >= 60 -> TempatSampahStatus.WASPADA
+            persentase >= 90 -> TempatSampahStatus.PENUH
+            persentase >= 70 -> TempatSampahStatus.WASPADA
             else -> TempatSampahStatus.AMAN
         }
 
-    val isFull: Boolean
-        get() = status == TempatSampahStatus.PENUH
+    val isFull: Boolean get() = status == TempatSampahStatus.PENUH
 }

@@ -52,7 +52,8 @@ class ReportActivity : AppCompatActivity() {
     }
 
     private fun renderReport() {
-        val snapshot = LaporanSampahHelper.buildSnapshot(this, currentPeriod)
+        // Menggunakan Helper Baru
+        val snapshot = SamosaReportGenerator.buildSnapshot(this, currentPeriod)
 
         binding.tvReportInfo.text = if (currentPeriod == ReportPeriod.DAILY) {
             getString(R.string.report_daily_info)
@@ -76,8 +77,9 @@ class ReportActivity : AppCompatActivity() {
     }
 
     private fun shareReport() {
-        val reportText = LaporanSampahHelper.buildReport(this, currentPeriod)
-        val reportFile = LaporanSampahHelper.exportReportFile(this, currentPeriod, reportText)
+        // Menggunakan Helper Baru
+        val reportText = SamosaReportGenerator.buildReport(this, currentPeriod)
+        val reportFile = SamosaReportGenerator.exportReportFile(this, currentPeriod, reportText)
         val reportUri = FileProvider.getUriForFile(
             this,
             "$packageName.fileprovider",

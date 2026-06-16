@@ -71,10 +71,13 @@ class BinManagementActivity : AppCompatActivity() {
                         compareByDescending<TempatSampah> { it.isActive }
                             .thenBy { it.lokasi.lowercase(Locale.getDefault()) }
                     )
-                    
-                    // Update local store as cache
-                    TempatSampahLocalStore.saveAll(this@BinManagementActivity, sortedBins)
-                    
+
+                    // PERBAIKAN BARIS 76: Menggunakan instance store lokal untuk menyimpan seluruh item list sebagai cache
+                    val localStore = TempatSampahLocalStore(this@BinManagementActivity)
+                    sortedBins.forEach { bin ->
+                        localStore.saveTempatSampah(bin)
+                    }
+
                     managementAdapter.submitList(sortedBins)
                     binding.tvManageEmpty.visibility = if (sortedBins.isEmpty()) View.VISIBLE else View.GONE
                     binding.rvManageBins.visibility = if (sortedBins.isEmpty()) View.GONE else View.VISIBLE
@@ -85,7 +88,7 @@ class BinManagementActivity : AppCompatActivity() {
     private fun updateBinActiveState(item: TempatSampah, isActive: Boolean) {
         if (item.isActive == isActive) return
         saveToFirebase(item.copy(isActive = isActive))
-        
+
         val message = if (isActive) {
             getString(R.string.management_toast_activated, item.lokasi)
         } else {
@@ -161,11 +164,12 @@ class BinManagementActivity : AppCompatActivity() {
                         val item = TempatSampah(
                             binId = binId,
                             lokasi = lokasi,
-                            persentase = persentase,
                             isActive = dialogBinding.switchAktifBinForm.isChecked,
-                            notifThreshold = threshold
+                            persentase = persentase,
+                            notifThreshold = threshold,
+                            jarakSensor = 0
                         )
-                        
+
                         saveToFirebase(item)
 
                         Toast.makeText(
@@ -184,12 +188,12 @@ class BinManagementActivity : AppCompatActivity() {
     private fun saveToFirebase(item: TempatSampah) {
         val database = FirebaseDatabase.getInstance("https://samosa-sampah-otomatis-angsau-default-rtdb.asia-southeast1.firebasedatabase.app/")
         val binRef = database.getReference("tempat_sampah").child(item.binId)
-        
+
         val data = mapOf(
             "binId" to item.binId,
             "lokasi" to item.lokasi,
-            "persentase" to item.persentase,
             "isActive" to item.isActive,
+            "persentase" to item.persentase,
             "notifThreshold" to item.notifThreshold
         )
 

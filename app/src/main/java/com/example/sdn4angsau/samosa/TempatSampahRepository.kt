@@ -14,55 +14,37 @@ interface TempatSampahRepository {
 
 class FirebaseTempatSampahRepository : TempatSampahRepository {
 
-    private val database = FirebaseDatabase.getInstance("https://samosa-sampah-otomatis-angsau-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    // Mengubah referensi ke root ("") karena data Tempat_Sampah_1 ada di tingkat paling atas
-    private val rootRef = database.getReference("")
+    private val database = FirebaseDatabase.getInstance().getReference("tempat_sampah")
 
     override fun getDaftarTempatSampahRealtime(): Flow<List<TempatSampah>> = callbackFlow {
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val bins = mutableListOf<TempatSampah>()
-                
-                // Pertama, cek apakah ada folder "tempat_sampah"
-                val folderTempatSampah = snapshot.child("tempat_sampah")
-                if (folderTempatSampah.exists()) {
-                    for (child in folderTempatSampah.children) {
-                        parseBinData(child)?.let { bins.add(it) }
-                    }
-                }
+                val listBins = mutableListOf<TempatSampah>()
 
-                // Kedua, cek data yang ada di root (seperti Tempat_Sampah_1)
-                for (child in snapshot.children) {
-                    // Hindari folder "tempat_sampah" itu sendiri agar tidak double
-                    if (child.key == "tempat_sampah") continue
-                    
-                    // Kita hanya ambil node yang memiliki field kapasitas_persen atau persentase
-                    if (child.hasChild("kapasitas_persen") || child.hasChild("persentase") || child.hasChild("lokasi")) {
-                        parseBinData(child)?.let { bin ->
-                            // Pastikan ID unik (tidak duplikat dengan yang di folder)
-                            if (bins.none { it.binId == bin.binId }) {
-                                bins.add(bin)
-                            }
-                        }
-                    }
-                }
-                
-                trySend(bins)
-            }
+                for (data in snapshot.children) {
+                    val binId = data.key ?: ""
+                    val lokasi = data.child("lokasi").getValue(String::class.java) ?: "Tanpa Lokasi"
+                    val isActive = data.child("isActive").getValue(Boolean::class.java) ?: true
 
-            private fun parseBinData(child: DataSnapshot): TempatSampah? {
-                val binId = child.child("binId").getValue(String::class.java) ?: child.key ?: return null
-                val lokasi = child.child("lokasi").getValue(String::class.java) ?: "Alat SAMOSA Asli"
-                
-                // Mendukung kunci 'persentase' atau 'kapasitas_persen' dari IoT
-                val persentase = child.child("persentase").getValue(Int::class.java) 
-                    ?: child.child("kapasitas_persen").getValue(Int::class.java) 
-                    ?: 0
-                    
-                val isActive = child.child("isActive").getValue(Boolean::class.java) ?: true
-                val notifThreshold = child.child("notifThreshold").getValue(Int::class.java) ?: 90
-                
-                return TempatSampah(binId, lokasi, persentase, isActive, notifThreshold)
+                    // OPSI A: Jika di Firebase Anda sudah menyimpan field "persentase" secara langsung
+                    val persenData = data.child("persentase").getValue(Int::class.java) ?: 0
+
+                    /*
+                    // OPSI B: Jika di Firebase berupa jarak cm (Contoh: Tinggi total tong = 50cm)
+                    val jarak = data.child("jarakSensor").getValue(Int::class.java) ?: 50
+                    val tinggiTongMaksimal = 50
+                    val persenData = (((tinggiTongMaksimal - jarak).toFloat() / tinggiTongMaksimal) * 100).toInt().coerceIn(0, 100)
+                    */
+
+                    val tempatSampah = TempatSampah(
+                        binId = binId,
+                        lokasi = lokasi,
+                        isActive = isActive,
+                        persentase = persenData
+                    )
+                    listBins.add(tempatSampah)
+                }
+                trySend(listBins)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -70,7 +52,7 @@ class FirebaseTempatSampahRepository : TempatSampahRepository {
             }
         }
 
-        rootRef.addValueEventListener(listener)
-        awaitClose { rootRef.removeEventListener(listener) }
+        database.addValueEventListener(listener)
+        awaitClose { database.removeEventListener(listener) }
     }
 }
