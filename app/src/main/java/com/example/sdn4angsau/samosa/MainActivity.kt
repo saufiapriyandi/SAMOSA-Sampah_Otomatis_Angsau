@@ -55,13 +55,21 @@ class MainActivity : AppCompatActivity() {
             val username = binding.etUsername.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            // Simulasi autentikasi (Best practice: gunakan Firebase Auth / HTTPS API)
-            if (username == "admin123" && password == "admin123") {
-                securePrefs.edit().putBoolean("SUDAH_LOGIN", true).apply()
-                pindahKeDashboard()
-            } else {
-                Toast.makeText(this, "Autentikasi Gagal", Toast.LENGTH_SHORT).show()
+            if (username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Email dan Password tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            // Autentikasi dengan Firebase Auth menggunakan Email dan Password
+            auth.signInWithEmailAndPassword(username, password)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        securePrefs.edit().putBoolean("SUDAH_LOGIN", true).apply()
+                        pindahKeDashboard()
+                    } else {
+                        Toast.makeText(this, "Gagal login: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
         }
 
         binding.btnGoogleLogin.setOnClickListener {
