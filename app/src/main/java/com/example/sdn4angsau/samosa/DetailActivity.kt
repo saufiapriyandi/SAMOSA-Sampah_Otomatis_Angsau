@@ -141,7 +141,10 @@ class DetailActivity : AppCompatActivity() {
         // 1. Pantau Kapasitas
         dbSampah.child("kapasitas_persen").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val value = snapshot.getValue(Int::class.java) ?: snapshot.getValue(Long::class.java)?.toInt() ?: 0
+                // [FIX M-1] Validasi nilai numerik: batasi ketat 0-100
+                val value = (snapshot.getValue(Int::class.java)
+                    ?: snapshot.getValue(Long::class.java)?.toInt()
+                    ?: 0).coerceIn(0, 100)
                 latestKapasitas = value
 
                 kumpulanData[currentDayIndex][4] = value
@@ -174,7 +177,10 @@ class DetailActivity : AppCompatActivity() {
         // 2. Pantau Jarak Sensor Dalam Bak
         dbSampah.child("jarak_cm").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val jarak = snapshot.getValue(Int::class.java) ?: snapshot.getValue(Long::class.java)?.toInt() ?: 0
+                // [FIX M-1] Batasi nilai jarak: 0-999 cm (tidak mungkin negatif atau sangat besar)
+                val jarak = (snapshot.getValue(Int::class.java)
+                    ?: snapshot.getValue(Long::class.java)?.toInt()
+                    ?: 0).coerceIn(0, 999)
                 latestJarakDalam = jarak
                 binding.tvSensor2.text = "$jarak cm"
             }
@@ -184,7 +190,10 @@ class DetailActivity : AppCompatActivity() {
         // 3. Pantau Jarak Sensor Luar Bak
         dbSampah.child("jarak_luar_cm").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val jarakLuar = snapshot.getValue(Int::class.java) ?: snapshot.getValue(Long::class.java)?.toInt() ?: 0
+                // [FIX M-1] Batasi nilai jarak: 0-999 cm
+                val jarakLuar = (snapshot.getValue(Int::class.java)
+                    ?: snapshot.getValue(Long::class.java)?.toInt()
+                    ?: 0).coerceIn(0, 999)
                 latestJarakLuar = jarakLuar
                 binding.tvSensor1.text = "$jarakLuar cm"
             }
@@ -195,7 +204,11 @@ class DetailActivity : AppCompatActivity() {
         dbSampah.child("status_tutup").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val statusRaw = snapshot.getValue(String::class.java) ?: "TERTUTUP"
-                val status = statusRaw.uppercase()
+                // [FIX M-1] Whitelist: hanya izinkan nilai yang diketahui. Tolak input berbahaya.
+                val allowedStatuses = setOf("TERBUKA", "TERTUTUP")
+                val status = statusRaw.uppercase().let {
+                    if (it in allowedStatuses) it else "TERTUTUP"
+                }
 
                 binding.tvStatusPenutup.text = status
                 if (status == "TERBUKA") {

@@ -422,6 +422,10 @@ public class DeviceSetupFragment extends Fragment {
             return;
         }
 
+        // [SECURITY NOTE - M-3] Payload WiFi dikirim sebagai plain text via Bluetooth Classic SPP.
+        // Untuk keamanan penuh, payload ini harus dienkripsi menggunakan AES-128 sebelum dikirim,
+        // DAN firmware ESP32 harus diupdate untuk mendekripsinya dengan kunci yang sama.
+        // Referensi: Audit Keamanan SAMOSA — Temuan M-3 (Medium severity)
         String data = "WIFI:" + ssid + "," + password + "\n";
 
         binding.btnSendWifi.setEnabled(false);

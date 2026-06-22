@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# [FIX C-2/M-2] Exclude Firebase config — contains API Key and project credentials.
+# Daftarkan akun CI/CD dengan file ini melalui environment variable atau secret manager.
+app/google-services.json

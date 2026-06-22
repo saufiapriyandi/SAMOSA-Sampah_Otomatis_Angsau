@@ -21,16 +21,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // 1. Confidentiality: Menggunakan EncryptedSharedPreferences untuk menyimpan sesi
-        val securePrefs = SecurityHelper.getEncryptedPrefs(this)
         
         auth = FirebaseAuth.getInstance()
-        val sudahLoginLokal = securePrefs.getBoolean("SUDAH_LOGIN", false)
-        val currentUser = auth.currentUser
 
-        // Cek sesi sebelum merender UI
-        if (sudahLoginLokal || currentUser != null) {
+        // Cek sesi menggunakan FirebaseAuth
+        if (auth.currentUser != null) {
             pindahKeDashboard()
             return
         }
@@ -39,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupGoogleSignIn()
-        setupLoginListeners(securePrefs)
+        setupLoginListeners()
     }
 
     private fun setupGoogleSignIn() {
@@ -50,26 +45,23 @@ class MainActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
     }
 
-    private fun setupLoginListeners(securePrefs: android.content.SharedPreferences) {
+    private fun setupLoginListeners() {
         binding.btnLogin.setOnClickListener {
-            val username = binding.etUsername.text.toString().trim()
+            val email = binding.etUsername.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Email dan Password tidak boleh kosong", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Autentikasi dengan Firebase Auth menggunakan Email dan Password
-            auth.signInWithEmailAndPassword(username, password)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        securePrefs.edit().putBoolean("SUDAH_LOGIN", true).apply()
-                        pindahKeDashboard()
-                    } else {
-                        Toast.makeText(this, "Gagal login: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            pindahKeDashboard()
+                        } else {
+                            Toast.makeText(this, "Login Gagal: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }
+            } else {
+                Toast.makeText(this, "Email dan Password tidak boleh kosong", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.btnGoogleLogin.setOnClickListener {
@@ -92,7 +84,6 @@ class MainActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    SecurityHelper.getEncryptedPrefs(this).edit().putBoolean("SUDAH_LOGIN", true).apply()
                     pindahKeDashboard()
                 } else {
                     Toast.makeText(this, "Firebase Gagal: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
@@ -105,3 +96,4 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 }
+

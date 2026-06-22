@@ -1,0 +1,26 @@
+﻿{
+  "_readme": "Template Firebase Security Rules. DEPLOY: Firebase Console -> Database -> Rules -> Paste -> Publish",
+  "rules": {
+    "tempat_sampah": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "Tempat_Sampah_1": {
+      ".read": "auth != null",
+      "lcd_baris_1": { ".write": "auth != null" },
+      "lcd_baris_2": { ".write": "auth != null" },
+      "kapasitas_persen": { ".write": false },
+      "jarak_cm": { ".write": false },
+      "jarak_luar_cm": { ".write": false },
+      "status_tutup": { ".write": false }
+    },
+    "Logs": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "$other": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}

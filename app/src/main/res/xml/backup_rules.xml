@@ -1,13 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older than API 31
-   See https://developer.android.com/about/versions/12/backup-restore
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   [FIX I-2] Konfigurasi aturan backup — exclude data sensitif dari backup ke Google Drive.
+   File ini berlaku untuk Android API < 31 (Android 11 ke bawah).
+   Lihat: https://developer.android.com/guide/topics/data/autobackup
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <!-- Exclude semua SharedPreferences yang mengandung data sensitif -->
+    <exclude domain="sharedpref" path="samosa_secure_prefs.xml"/>
+    <exclude domain="sharedpref" path="SamosaNotificationState.xml"/>
+    <exclude domain="sharedpref" path="SAMOSA_PREFS.xml"/>
+    <!-- Izinkan backup data non-sensitif lainnya -->
+    <include domain="sharedpref" path="."/>
 </full-backup-content>

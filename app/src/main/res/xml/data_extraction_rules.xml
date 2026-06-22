@@ -1,19 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   [FIX I-2] Konfigurasi aturan ekstraksi data — exclude data sensitif dari cloud backup.
+   File ini berlaku untuk Android API 31+ (Android 12 ke atas).
+   Lihat: https://developer.android.com/about/versions/12/backup-restore#xml-changes
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- Exclude SharedPreferences yang mengandung sesi dan data sensitif -->
+        <exclude domain="sharedpref" path="samosa_secure_prefs.xml"/>
+        <exclude domain="sharedpref" path="SamosaNotificationState.xml"/>
+        <exclude domain="sharedpref" path="SAMOSA_PREFS.xml"/>
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <!-- Izinkan transfer data profil pengguna saat ganti HP, kecuali data sesi -->
+        <exclude domain="sharedpref" path="samosa_secure_prefs.xml"/>
     </device-transfer>
-    -->
 </data-extraction-rules>

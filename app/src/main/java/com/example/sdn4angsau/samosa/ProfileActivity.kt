@@ -73,6 +73,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         binding.btnLogoutProfile.setOnClickListener {
+            // [FIX C-3] Bersihkan SEMUA storage sesi secara konsisten
             FirebaseAuth.getInstance().signOut()
 
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -81,10 +82,8 @@ class ProfileActivity : AppCompatActivity() {
                 .build()
             GoogleSignIn.getClient(this, gso).signOut()
 
-            val sharedPref = getSharedPreferences("SesiSamosa", MODE_PRIVATE)
-            sharedPref.edit {
-                putBoolean("SUDAH_LOGIN", false)
-            }
+            // Bersihkan EncryptedSharedPreferences (konsisten dengan yang dibaca di MainActivity)
+            SecurityHelper.getEncryptedPrefs(this).edit().clear().apply()
 
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -104,7 +103,8 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun displayUserProfile() {
-        val sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+        // [FIX M-4] Baca data profil dari EncryptedSharedPreferences (konsisten dengan EditProfileActivity)
+        val sharedPref = SecurityHelper.getEncryptedPrefs(this)
         
         val name = sharedPref.getString("full_name", "Kepala Sekolah")
         val position = sharedPref.getString("position", "Kepala Sekolah")

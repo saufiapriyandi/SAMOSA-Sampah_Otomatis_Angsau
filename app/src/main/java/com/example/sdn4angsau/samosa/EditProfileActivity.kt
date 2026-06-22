@@ -63,7 +63,8 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun loadUserData() {
-        val sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+        // [FIX M-4] Gunakan EncryptedSharedPreferences untuk melindungi data PII pengguna
+        val sharedPref = SecurityHelper.getEncryptedPrefs(this)
         binding.etFullName.setText(sharedPref.getString("full_name", ""))
         binding.etEmployeeId.setText(sharedPref.getString("employee_id", ""))
         binding.etPosition.setText(sharedPref.getString("position", ""))
@@ -89,8 +90,8 @@ class EditProfileActivity : AppCompatActivity() {
             return
         }
 
-        // Simpan data teks ke SharedPreferences
-        val sharedPref = getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
+        // [FIX M-4] Simpan data teks ke EncryptedSharedPreferences (bukan plain SharedPreferences)
+        val sharedPref = SecurityHelper.getEncryptedPrefs(this)
         val editor = sharedPref.edit()
         editor.putString("full_name", name)
         editor.putString("employee_id", id)
@@ -105,7 +106,7 @@ class EditProfileActivity : AppCompatActivity() {
                     FileOutputStream(file).use { output ->
                         input.copyTo(output)
                     }
-                    // Simpan path URI ke SharedPreferences untuk dibaca ProfileActivity
+                    // Simpan path URI ke EncryptedSharedPreferences untuk dibaca ProfileActivity
                     editor.putString("profile_photo_uri", Uri.fromFile(file).toString())
                 }
             } catch (e: Exception) {

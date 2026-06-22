@@ -19,7 +19,9 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // [FIX I-1] Aktifkan ProGuard/R8 untuk obfuscation — mempersulit reverse engineering APK
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
