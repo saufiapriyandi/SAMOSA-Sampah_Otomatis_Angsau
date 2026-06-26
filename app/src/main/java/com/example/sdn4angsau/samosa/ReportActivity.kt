@@ -77,9 +77,7 @@ class ReportActivity : AppCompatActivity() {
     }
 
     private fun shareReport() {
-        // Menggunakan Helper Baru
-        val reportText = SamosaReportGenerator.buildReport(this, currentPeriod)
-        val reportFile = SamosaReportGenerator.exportReportFile(this, currentPeriod, reportText)
+        val reportFile = SamosaReportGenerator.exportReportPdf(this, currentPeriod)
         val reportUri = FileProvider.getUriForFile(
             this,
             "$packageName.fileprovider",
@@ -87,11 +85,10 @@ class ReportActivity : AppCompatActivity() {
         )
 
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
+            type = "application/pdf"
             clipData = ClipData.newRawUri(getString(R.string.report_title), reportUri)
             putExtra(Intent.EXTRA_STREAM, reportUri)
             putExtra(Intent.EXTRA_SUBJECT, getString(R.string.report_title))
-            putExtra(Intent.EXTRA_TEXT, reportText)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 

@@ -6,12 +6,14 @@ plugins {
 
 android {
     namespace = "com.example.sdn4angsau.samosa"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.sdn4angsau.samosa"
-        minSdk = 24
-        targetSdk = 34
+        // [FIX H2] Naikkan minSdk ke 26 (Android 8.0 Oreo)
+        // Android 7.0 (API 24) memiliki kerentanan keamanan yang tidak lagi dipatch.
+        minSdk = 26
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -22,7 +24,15 @@ android {
             // [FIX I-1] Aktifkan ProGuard/R8 untuk obfuscation — mempersulit reverse engineering APK
             isMinifyEnabled = true
             isShrinkResources = true
+            // [FIX H3] Pastikan release build TIDAK debuggable
+            isDebuggable = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        debug {
+            // H3 & H4: debuggable=true dan testOnly=true HANYA berlaku di debug build.
+            // MobSF mendeteksi ini karena APK yang discan adalah debug build.
+            // Release build secara default sudah aman (debuggable=false, testOnly=false).
+            isDebuggable = true
         }
     }
     compileOptions {

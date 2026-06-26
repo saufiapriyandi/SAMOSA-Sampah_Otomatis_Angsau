@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Network Security Configuration — SAMOSA
+    =========================================
+    Konfigurasi ini memastikan:
+    1. Semua koneksi jaringan WAJIB menggunakan HTTPS (cleartext dilarang).
+    2. Hanya mempercayai system certificate authorities.
+    3. Meningkatkan keamanan komunikasi data sensor IoT dan Firebase.
+-->
+<network-security-config>
+    <!-- Larang semua HTTP cleartext traffic secara global -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!--
+        Jika di masa depan perlu akses ke server lokal (development only),
+        tambahkan domain-config khusus di bawah ini:
+
+        <domain-config cleartextTrafficPermitted="true">
+            <domain includeSubdomains="true">10.0.2.2</domain>
+        </domain-config>
+    -->
+</network-security-config>
