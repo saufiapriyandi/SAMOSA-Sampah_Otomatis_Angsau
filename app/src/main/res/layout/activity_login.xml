@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F7F9"
-    tools:context=".MainActivity">
+    tools:context=".LoginActivity">
 
+    <!-- ─── Background Hijau Atas ─── -->
     <View
         android:id="@+id/bgTop"
         android:layout_width="match_parent"
@@ -14,6 +15,7 @@
         android:background="#20B273"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- ─── Logo / Ikon ─── -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvLogo"
         android:layout_width="72dp"
@@ -25,14 +27,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <ImageView
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_gravity="center"
+            android:contentDescription="Logo SAMOSA"
             android:src="@drawable/ic_trash"
             app:tint="#FFFFFF" />
     </androidx.cardview.widget.CardView>
 
+    <!-- ─── Judul ─── -->
     <TextView
         android:id="@+id/tvWelcome"
         android:layout_width="wrap_content"
@@ -51,16 +56,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:letterSpacing="0.05"
         android:text="STAF INTERNAL UPTD SDN 4 ANGSAU"
         android:textColor="#E0E0E0"
         android:textSize="10sp"
         android:textStyle="bold"
-        android:letterSpacing="0.05"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvWelcome" />
 
+    <!-- ─── Card Login Form ─── -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvLoginForm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
@@ -76,21 +83,25 @@
             android:orientation="vertical"
             android:padding="24dp">
 
+            <!-- Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/ic_monitor"
-                    app:tint="#20B273"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="Ikon shield"
+                    android:src="@android:drawable/ic_secure"
+                    app:tint="#20B273" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Monitoring Real-time"
+                    android:text="Login Offline Terenkripsi"
                     android:textColor="#222222"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -101,15 +112,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp"
-                android:text="Masuk ke sistem untuk memantau status kebersihan secara langsung."
+                android:text="Masukkan kredensial untuk mengakses sistem SAMOSA."
                 android:textColor="#888888"
                 android:textSize="12sp" />
 
+            <!-- ─── USERNAME ─── -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="USERNAME"
+                android:text="EMAIL"
                 android:textColor="#555555"
                 android:textSize="10sp"
                 android:textStyle="bold" />
@@ -120,31 +132,37 @@
                 app:cardBackgroundColor="#F5F7F9"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp">
+
                     <ImageView
                         android:layout_width="18dp"
                         android:layout_height="18dp"
+                        android:contentDescription="Ikon email"
                         android:src="@drawable/ic_profile"
                         app:tint="#AAAAAA" />
+
                     <EditText
                         android:id="@+id/etUsername"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginStart="12dp"
+                        android:autofillHints="emailAddress"
                         android:background="@null"
-                        android:hint="Masukkan username"
-                        android:inputType="text"
+                        android:hint="Masukkan email"
+                        android:inputType="textEmailAddress"
                         android:textColor="#333333"
                         android:textColorHint="#AAAAAA"
                         android:textSize="14sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- ─── PASSWORD ─── -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -161,29 +179,35 @@
                 app:cardBackgroundColor="#F5F7F9"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp">
+
                     <ImageView
                         android:layout_width="18dp"
                         android:layout_height="18dp"
+                        android:contentDescription="Ikon password"
                         android:src="@android:drawable/ic_lock_idle_lock"
                         app:tint="#AAAAAA" />
+
                     <EditText
                         android:id="@+id/etPassword"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
+                        android:autofillHints="password"
                         android:background="@null"
                         android:hint="Masukkan password"
                         android:inputType="textPassword"
                         android:textColor="#333333"
                         android:textColorHint="#AAAAAA"
                         android:textSize="14sp" />
+
                     <ImageView
                         android:id="@+id/ivTogglePassword"
                         android:layout_width="22dp"
@@ -195,11 +219,70 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- ─── Error Message ─── -->
+            <TextView
+                android:id="@+id/tvErrorMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_error_banner"
+                android:drawableStart="@android:drawable/ic_dialog_alert"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:textColor="#D32F2F"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="Login gagal. Sisa percobaan: 3"
+                tools:visibility="visible" />
+
+            <!-- ─── Countdown Lockout ─── -->
+            <LinearLayout
+                android:id="@+id/layoutCountdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_lockout_banner"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginBottom="8dp"
+                    android:contentDescription="Ikon timer"
+                    android:src="@android:drawable/ic_lock_idle_lock"
+                    app:tint="#D32F2F" />
+
+                <TextView
+                    android:id="@+id/tvCountdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#D32F2F"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    tools:text="58" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="DETIK"
+                    android:textColor="#888888"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- ─── Tombol Login ─── -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogin"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:text="Masuk"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
@@ -208,55 +291,15 @@
                 app:backgroundTint="#42C88F"
                 app:cornerRadius="14dp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp">
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="#E0E0E0"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ATAU"
-                    android:textColor="#AAAAAA"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginHorizontal="12dp"/>
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1"
-                    android:background="#E0E0E0"/>
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnGoogleLogin"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="8dp"
-                android:text="Masuk dengan Google"
-                android:textAllCaps="false"
-                android:textColor="#555555"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:backgroundTint="#FFFFFF"
-                app:cornerRadius="14dp"
-                app:strokeColor="#E0E0E0"
-                app:strokeWidth="1dp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- ─── Footer ─── -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:text="Monitoring Kebersihan Real-time v1.0.0"
+        android:text="SAMOSA — Autentikasi Offline v1.0.0"
         android:textColor="#AAAAAA"
         android:textSize="10sp"
         android:textStyle="bold"
