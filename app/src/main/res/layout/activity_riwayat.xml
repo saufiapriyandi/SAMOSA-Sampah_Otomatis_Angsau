@@ -43,14 +43,6 @@
             app:layout_constraintTop_toTopOf="@id/btnBackRiwayat">
 
             <TextView
-                android:id="@+id/tvHaloNama"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Halo, Memuat..."
-                android:textColor="#E0E0E0"
-                android:textSize="12sp" />
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Riwayat Aktivitas"

@@ -18,6 +18,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -81,8 +86,8 @@ class DetailActivity : AppCompatActivity() {
         binding.tvDetailLokasi.text = namaLokasi
         binding.tvDetailBinId.text = "BIN-ID: $binId"
 
-        // Inisialisasi dengan nol — data nyata akan diisi dari Firebase
-        kumpulanData = MutableList(7) { MutableList(5) { 0 } }
+        // Inisialisasi dengan -1 (belum ada data) untuk 24 jam (indeks 0 - 23)
+        kumpulanData = MutableList(7) { MutableList(24) { -1 } }
 
         setupTabTombol()
         mulaiPantauFirebase(binId)
@@ -148,8 +153,9 @@ class DetailActivity : AppCompatActivity() {
                     ?: 0).coerceIn(0, 100)
                 latestKapasitas = value
 
-                // Update slot "Kini" (indeks 4) dengan nilai real-time
-                kumpulanData[currentDayIndex][4] = value
+                // Update slot jam saat ini dengan nilai real-time
+                val jamSaatIni = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+                kumpulanData[currentDayIndex][jamSaatIni] = value
                 updateSemuaGrafik(kumpulanData[currentDayIndex], true)
 
                 // Simpan nilai ini ke slot waktu yang sesuai di Firebase
@@ -255,31 +261,23 @@ class DetailActivity : AppCompatActivity() {
     }
 
     /**
-     * Menyimpan nilai kapasitas saat ini ke Firebase berdasarkan slot waktu.
-     * Slot: 0=Pagi(06-09), 1=Siang(10-13), 2=Sore(14-17), 3=Malam(18-05), 4=Kini(selalu update)
+     * Menyimpan nilai kapasitas saat ini ke Firebase berdasarkan slot waktu (jam 0-23).
      */
     private fun simpanRekapitulasiHarian(binId: String, kapasitas: Int) {
         val calendar = Calendar.getInstance()
         val jam = calendar.get(Calendar.HOUR_OF_DAY)
-        val slotIndex = when (jam) {
-            in 6..9   -> 0  // Pagi
-            in 10..13 -> 1  // Siang
-            in 14..17 -> 2  // Sore
-            else      -> 3  // Malam (18-23 dan 00-05)
-        }
 
         val namaHari = getNamaHariFirebase(currentDayIndex)
         val basePath = if (binId == "Tempat_Sampah_1") "Tempat_Sampah_1" else "tempat_sampah/$binId"
         val dbRekap = FirebaseDatabase.getInstance()
             .getReference("$basePath/rekapitulasi_harian/$namaHari")
 
-        // Simpan ke slot saat ini dan selalu update slot "kini" (4)
-        dbRekap.child(slotIndex.toString()).setValue(kapasitas)
-        dbRekap.child("4").setValue(kapasitas)
+        // Simpan ke slot jam saat ini
+        dbRekap.child(jam.toString()).setValue(kapasitas)
     }
 
     /**
-     * Membaca data rekapitulasi harian dari Firebase dan mengisi grafik dengan data nyata.
+     * Membaca data rekapitulasi harian (24 jam) dari Firebase dan mengisi grafik.
      */
     private fun bacaRekapitulasiHarian(binId: String) {
         val namaHari = getNamaHariFirebase(currentDayIndex)
@@ -290,12 +288,12 @@ class DetailActivity : AppCompatActivity() {
         dbRekap.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 var adaPerubahan = false
-                for (slotIndex in 0..3) {
-                    val nilai = (snapshot.child(slotIndex.toString()).getValue(Int::class.java)
-                        ?: snapshot.child(slotIndex.toString()).getValue(Long::class.java)?.toInt()
+                for (jam in 0..23) {
+                    val nilai = (snapshot.child(jam.toString()).getValue(Int::class.java)
+                        ?: snapshot.child(jam.toString()).getValue(Long::class.java)?.toInt()
                         ?: -1) // -1 = belum ada data
                     if (nilai >= 0) {
-                        kumpulanData[currentDayIndex][slotIndex] = nilai.coerceIn(0, 100)
+                        kumpulanData[currentDayIndex][jam] = nilai.coerceIn(0, 100)
                         adaPerubahan = true
                     }
                 }
@@ -307,9 +305,6 @@ class DetailActivity : AppCompatActivity() {
         })
     }
 
-    /**
-     * Mengembalikan nama hari dalam format string untuk path Firebase.
-     */
     private fun getNamaHariFirebase(dayIndex: Int): String {
         return when (dayIndex) {
             0 -> "senin"
@@ -324,15 +319,63 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun updateSemuaGrafik(dataHarian: List<Int>, isHariIni: Boolean) {
-        aturBalok(binding.val08, binding.bar08, dataHarian[0])
-        aturBalok(binding.val10, binding.bar10, dataHarian[1])
-        aturBalok(binding.val12, binding.bar12, dataHarian[2])
-        aturBalok(binding.val14, binding.bar14, dataHarian[3])
-        aturBalok(binding.tvGrafikSekarang, binding.barGrafikSekarang, dataHarian[4])
+        val entries = ArrayList<Entry>()
+        var lastValidValue = 0
+        
+        for (i in 0..23) {
+            val nilai = dataHarian[i]
+            if (nilai >= 0) {
+                entries.add(Entry(i.toFloat(), nilai.toFloat()))
+                lastValidValue = nilai
+            }
+        }
+        
+        // Jika tidak ada data sama sekali, berikan nilai default
+        if (entries.isEmpty()) {
+            entries.add(Entry(0f, 0f))
+        }
 
-        binding.tvWaktuKini.text = if (isHariIni) "Kini" else "Akhir"
+        val dataSet = LineDataSet(entries, "Volume Sampah")
+        dataSet.color = colorSelected
+        dataSet.valueTextColor = colorMutedText
+        dataSet.lineWidth = 3f
+        dataSet.circleRadius = 5f
+        dataSet.setCircleColor(colorSelected)
+        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
+        dataSet.setDrawFilled(true)
+        dataSet.fillColor = colorSafe
+        dataSet.fillAlpha = 50
 
-        val persentaseKini = dataHarian[4]
+        val lineData = LineData(dataSet)
+        binding.lineChart.data = lineData
+
+        // Konfigurasi Chart
+        binding.lineChart.description.isEnabled = false
+        binding.lineChart.legend.isEnabled = false
+        binding.lineChart.axisRight.isEnabled = false
+
+        val xAxis = binding.lineChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.granularity = 1f // step 1 jam
+        xAxis.labelCount = 6 // tampilkan bbrp label jam
+        xAxis.textColor = colorMutedText
+        xAxis.setDrawGridLines(false)
+        xAxis.valueFormatter = object : IndexAxisValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                val jam = value.toInt()
+                return String.format("%02d:00", jam)
+            }
+        }
+
+        val yAxis = binding.lineChart.axisLeft
+        yAxis.axisMinimum = 0f
+        yAxis.axisMaximum = 100f
+        yAxis.textColor = colorMutedText
+        yAxis.setDrawGridLines(true)
+
+        binding.lineChart.invalidate()
+
+        val persentaseKini = if (isHariIni) latestKapasitas else lastValidValue
         val (statusLabel, warnaStatus) = when {
             persentaseKini >= 90 -> Pair("PENUH", colorFull)
             persentaseKini >= 60 -> Pair("PERINGATAN", colorWarning)
@@ -340,22 +383,6 @@ class DetailActivity : AppCompatActivity() {
         }
         binding.tvLogTerbaruStatus.text = "Status: $statusLabel ($persentaseKini%)"
         binding.tvLogTerbaruStatus.setTextColor(warnaStatus)
-    }
-
-    private fun aturBalok(tvVal: TextView, barCard: CardView, persentase: Int) {
-        tvVal.text = "$persentase%"
-        val colorInt = when {
-            persentase >= 90 -> colorFull
-            persentase >= 60 -> colorWarning
-            else -> colorSafe
-        }
-        tvVal.setTextColor(colorInt)
-        barCard.setCardBackgroundColor(colorInt)
-
-        val tinggiVisual = 12 + (persentase * 1.1).toInt()
-        val layoutParams = barCard.layoutParams
-        layoutParams.height = (tinggiVisual * resources.displayMetrics.density).toInt()
-        barCard.layoutParams = layoutParams
     }
 
     companion object {
