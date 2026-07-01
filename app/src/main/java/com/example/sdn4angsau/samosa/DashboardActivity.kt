@@ -10,7 +10,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
+import android.widget.Toast
 import com.example.sdn4angsau.samosa.databinding.ActivityDashboardBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -67,6 +69,14 @@ class DashboardActivity : AppCompatActivity() {
             mulaiPantauFirebaseRealtime()
         }
 
+        // Cek sesi Firebase Auth
+        if (FirebaseAuth.getInstance().currentUser == null) {
+            Toast.makeText(this, "Akses ditolak: Anda belum login ke server.", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
+
         database = FirebaseDatabase.getInstance().reference
         mulaiPantauFirebaseRealtime()
     }
@@ -105,10 +115,16 @@ class DashboardActivity : AppCompatActivity() {
         // 2. Pantau Tempat Sampah Simulasi/Lainnya dari Manajemen (node "tempat_sampah")
         val repository = FirebaseTempatSampahRepository()
         lifecycleScope.launch {
-            repository.getDaftarTempatSampahRealtime().collect { bins ->
-                // Hanya ambil yang statusnya aktif
-                sampahManajemen = bins.filter { it.isActive }
-                updateDashboardUI()
+            try {
+                repository.getDaftarTempatSampahRealtime().collect { bins ->
+                    // Hanya ambil yang statusnya aktif
+                    sampahManajemen = bins.filter { it.isActive }
+                    updateDashboardUI()
+                }
+            } catch (e: Exception) {
+                binding.progressDashboard.visibility = View.GONE
+                binding.cardErrorState.visibility = View.VISIBLE
+                binding.tvErrorMessage.text = "Gagal memuat data: ${e.message}"
             }
         }
     }

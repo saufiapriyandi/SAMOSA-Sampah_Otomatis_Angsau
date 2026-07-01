@@ -22,6 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import java.security.MessageDigest
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,6 +50,11 @@ class MainActivity : AppCompatActivity() {
 
         // Teks default tombol
         private const val BUTTON_TEXT_DEFAULT = "Masuk"
+
+        // Kredensial offline (fallback jika Firebase Auth belum terdaftar)
+        private const val OFFLINE_USERNAME = "samosaofficiall@gmail.com"
+        private const val OFFLINE_PASSWORD_HASH =
+            "104d0b640a17285d190b2eec55e603cc07537ff9d0036388b5ddc5e7a0c23991"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,16 +143,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupLoginListeners() {
         binding.btnLogin.setOnClickListener {
-            val email = binding.etUsername.text.toString().trim()
-            val password = binding.etPassword.text.toString().trim()
+            val email = binding.etUsername.text.toString().trim().lowercase()
+            val password = binding.etPassword.text.toString()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
+                // Disable tombol sementara untuk mencegah double-click
+                binding.btnLogin.isEnabled = false
+
                 // Pengecekan Firebase secara murni untuk semua akun
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             onLoginSuccess()
                         } else {
+                            binding.btnLogin.isEnabled = true
                             onLoginFailed(task.exception?.message)
                         }
                     }
@@ -159,6 +169,28 @@ class MainActivity : AppCompatActivity() {
         binding.btnGoogleLogin.setOnClickListener {
             launcherGoogleSignIn.launch(googleSignInClient.signInIntent)
         }
+    }
+
+    // ════════════════════════════════════════════════
+    //  VERIFIKASI OFFLINE (FALLBACK)
+    // ════════════════════════════════════════════════
+
+    /**
+     * Fallback: verifikasi kredensial secara offline menggunakan SHA-256 hash.
+     * Digunakan jika akun belum terdaftar di Firebase Authentication.
+     */
+    private fun verifyOfflineCredentials(email: String, password: String): Boolean {
+        val inputHash = hashSHA256(password)
+        return email == OFFLINE_USERNAME && inputHash == OFFLINE_PASSWORD_HASH
+    }
+
+    /**
+     * Menghitung SHA-256 hash dari string input.
+     */
+    private fun hashSHA256(input: String): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hashBytes = digest.digest(input.toByteArray(Charsets.UTF_8))
+        return hashBytes.joinToString("") { "%02x".format(it) }
     }
 
     // ════════════════════════════════════════════════
@@ -227,10 +259,11 @@ class MainActivity : AppCompatActivity() {
             startLockoutCountdown(LOCKOUT_DURATION_MS)
         } else {
             val remaining = MAX_FAILED_ATTEMPTS - currentAttempts
+            val msg = errorMessage ?: "Email atau password salah"
             Toast.makeText(
                 this,
-                "Login gagal. Sisa percobaan: $remaining",
-                Toast.LENGTH_SHORT
+                "Login gagal: $msg\nSisa percobaan: $remaining",
+                Toast.LENGTH_LONG
             ).show()
         }
     }

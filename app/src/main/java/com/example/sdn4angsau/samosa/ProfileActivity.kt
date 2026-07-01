@@ -121,21 +121,9 @@ class ProfileActivity : AppCompatActivity() {
         if (!photoUriString.isNullOrEmpty()) {
             try {
                 val uri = Uri.parse(photoUriString)
-                if (uri.scheme == "file") {
-                    val file = File(uri.path ?: "")
-                    if (file.exists()) {
-                        val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                        if (bitmap != null) {
-                            binding.ivProfilePhotoDisplay.setImageBitmap(bitmap)
-                            binding.ivProfilePhotoDisplay.setPadding(0, 0, 0, 0)
-                            binding.ivProfilePhotoDisplay.imageTintList = null
-                        }
-                    }
-                } else {
-                    binding.ivProfilePhotoDisplay.setImageURI(uri)
-                    binding.ivProfilePhotoDisplay.setPadding(0, 0, 0, 0)
-                    binding.ivProfilePhotoDisplay.imageTintList = null
-                }
+                binding.ivProfilePhotoDisplay.setImageURI(uri)
+                binding.ivProfilePhotoDisplay.setPadding(0, 0, 0, 0)
+                binding.ivProfilePhotoDisplay.imageTintList = null
             } catch (e: Exception) {
                 e.printStackTrace()
             }
