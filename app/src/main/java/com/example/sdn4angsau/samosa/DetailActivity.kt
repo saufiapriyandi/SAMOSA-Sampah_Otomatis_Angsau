@@ -81,15 +81,12 @@ class DetailActivity : AppCompatActivity() {
         binding.tvDetailLokasi.text = namaLokasi
         binding.tvDetailBinId.text = "BIN-ID: $binId"
 
-        val bin = TempatSampah(binId = binId, lokasi = namaLokasi, persentase = 0, isActive = true)
-
-        // Data Dummy untuk 7 hari, pastikan Helper kamu bisa mengembalikan array list
-        kumpulanData = MutableList(7) { dayIndex ->
-            TempatSampahHistoryHelper.getDailyPercentages(bin, dayIndex, true).toMutableList()
-        }
+        // Inisialisasi dengan nol — data nyata akan diisi dari Firebase
+        kumpulanData = MutableList(7) { MutableList(5) { 0 } }
 
         setupTabTombol()
-        mulaiPantauFirebase()
+        mulaiPantauFirebase(binId)
+        bacaRekapitulasiHarian(binId)
 
         binding.btnBackDetail.setOnClickListener { finish() }
 
@@ -135,11 +132,15 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun mulaiPantauFirebase() {
-        val dbSampah = FirebaseDatabase.getInstance().getReference("Tempat_Sampah_1")
+    private fun mulaiPantauFirebase(binId: String) {
+        val (dbSampah, fieldName) = if (binId == "Tempat_Sampah_1") {
+            Pair(FirebaseDatabase.getInstance().getReference("Tempat_Sampah_1"), "kapasitas_persen")
+        } else {
+            Pair(FirebaseDatabase.getInstance().getReference("tempat_sampah/$binId"), "persentase")
+        }
 
         // 1. Pantau Kapasitas
-        dbSampah.child("kapasitas_persen").addValueEventListener(object : ValueEventListener {
+        dbSampah.child(fieldName).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 // [FIX M-1] Validasi nilai numerik: batasi ketat 0-100
                 val value = (snapshot.getValue(Int::class.java)
@@ -147,8 +148,12 @@ class DetailActivity : AppCompatActivity() {
                     ?: 0).coerceIn(0, 100)
                 latestKapasitas = value
 
+                // Update slot "Kini" (indeks 4) dengan nilai real-time
                 kumpulanData[currentDayIndex][4] = value
                 updateSemuaGrafik(kumpulanData[currentDayIndex], true)
+
+                // Simpan nilai ini ke slot waktu yang sesuai di Firebase
+                simpanRekapitulasiHarian(binId, value)
 
                 val currentKapasitasStatus = when {
                     value >= 90 -> "PENUH"
@@ -247,6 +252,75 @@ class DetailActivity : AppCompatActivity() {
 
         val logRef = FirebaseDatabase.getInstance().getReference("Logs").push()
         logRef.setValue(logData)
+    }
+
+    /**
+     * Menyimpan nilai kapasitas saat ini ke Firebase berdasarkan slot waktu.
+     * Slot: 0=Pagi(06-09), 1=Siang(10-13), 2=Sore(14-17), 3=Malam(18-05), 4=Kini(selalu update)
+     */
+    private fun simpanRekapitulasiHarian(binId: String, kapasitas: Int) {
+        val calendar = Calendar.getInstance()
+        val jam = calendar.get(Calendar.HOUR_OF_DAY)
+        val slotIndex = when (jam) {
+            in 6..9   -> 0  // Pagi
+            in 10..13 -> 1  // Siang
+            in 14..17 -> 2  // Sore
+            else      -> 3  // Malam (18-23 dan 00-05)
+        }
+
+        val namaHari = getNamaHariFirebase(currentDayIndex)
+        val basePath = if (binId == "Tempat_Sampah_1") "Tempat_Sampah_1" else "tempat_sampah/$binId"
+        val dbRekap = FirebaseDatabase.getInstance()
+            .getReference("$basePath/rekapitulasi_harian/$namaHari")
+
+        // Simpan ke slot saat ini dan selalu update slot "kini" (4)
+        dbRekap.child(slotIndex.toString()).setValue(kapasitas)
+        dbRekap.child("4").setValue(kapasitas)
+    }
+
+    /**
+     * Membaca data rekapitulasi harian dari Firebase dan mengisi grafik dengan data nyata.
+     */
+    private fun bacaRekapitulasiHarian(binId: String) {
+        val namaHari = getNamaHariFirebase(currentDayIndex)
+        val basePath = if (binId == "Tempat_Sampah_1") "Tempat_Sampah_1" else "tempat_sampah/$binId"
+        val dbRekap = FirebaseDatabase.getInstance()
+            .getReference("$basePath/rekapitulasi_harian/$namaHari")
+
+        dbRekap.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var adaPerubahan = false
+                for (slotIndex in 0..3) {
+                    val nilai = (snapshot.child(slotIndex.toString()).getValue(Int::class.java)
+                        ?: snapshot.child(slotIndex.toString()).getValue(Long::class.java)?.toInt()
+                        ?: -1) // -1 = belum ada data
+                    if (nilai >= 0) {
+                        kumpulanData[currentDayIndex][slotIndex] = nilai.coerceIn(0, 100)
+                        adaPerubahan = true
+                    }
+                }
+                if (adaPerubahan) {
+                    updateSemuaGrafik(kumpulanData[currentDayIndex], true)
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    /**
+     * Mengembalikan nama hari dalam format string untuk path Firebase.
+     */
+    private fun getNamaHariFirebase(dayIndex: Int): String {
+        return when (dayIndex) {
+            0 -> "senin"
+            1 -> "selasa"
+            2 -> "rabu"
+            3 -> "kamis"
+            4 -> "jumat"
+            5 -> "sabtu"
+            6 -> "minggu"
+            else -> "senin"
+        }
     }
 
     private fun updateSemuaGrafik(dataHarian: List<Int>, isHariIni: Boolean) {

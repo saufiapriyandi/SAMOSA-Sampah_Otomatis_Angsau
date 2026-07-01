@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
+        android:clipToPadding="false"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,7 +21,7 @@
             <View
                 android:id="@+id/bgHeader"
                 android:layout_width="match_parent"
-                android:layout_height="240dp"
+                android:layout_height="140dp"
                 android:background="#20B273"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="112dp"
+                android:layout_marginTop="12dp"
                 app:cardBackgroundColor="#33FFFFFF"
                 app:cardCornerRadius="25dp"
                 app:cardElevation="0dp"
@@ -385,7 +386,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#20B273"
-        android:elevation="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="24dp"
