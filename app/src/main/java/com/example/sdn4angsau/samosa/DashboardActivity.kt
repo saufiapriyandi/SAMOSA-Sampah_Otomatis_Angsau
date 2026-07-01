@@ -88,6 +88,15 @@ class DashboardActivity : AppCompatActivity() {
                 listSampah.add(sampahTerbaru)
                 sampahAdapter.submitList(listSampah.toList())
 
+                // ── PERBAIKAN NOTIFIKASI ──────────────────────────────────
+                // syncNotifications() harus dipanggil setiap kali data Firebase
+                // berubah agar notifikasi "sampah penuh" benar-benar dikirim ke HP.
+                TempatSampahNotificationHelper.syncNotifications(
+                    context = this@DashboardActivity,
+                    bins = listSampah.toList()
+                )
+                // ─────────────────────────────────────────────────────────
+
                 val total = listSampah.size
                 val penuh = listSampah.count { it.persentase >= 60 }
                 val aman = total - penuh

@@ -1,8 +1,11 @@
 package com.example.sdn4angsau.samosa
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.method.HideReturnsTransformationMethod
@@ -10,6 +13,8 @@ import android.text.method.PasswordTransformationMethod
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.sdn4angsau.samosa.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -48,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         auth = FirebaseAuth.getInstance()
 
         // Cek sesi menggunakan FirebaseAuth
@@ -59,6 +64,20 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // ════════════════════════════════════════════════
+        //  [TAMBAHAN BARU] PERMINTAAN IZIN NOTIFIKASI
+        // ════════════════════════════════════════════════
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    101
+                )
+            }
+        }
+        // ════════════════════════════════════════════════
 
         // [TAMBAHAN] Inisialisasi SharedPreferences untuk brute force
         loginPrefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -235,9 +254,9 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Jalankan CountDownTimer:
-     *  - btnLogin.isEnabled = false
-     *  - Teks tombol menjadi "Tunggu X detik"
-     *  - Setelah selesai → reset dan aktifkan kembali
+     * - btnLogin.isEnabled = false
+     * - Teks tombol menjadi "Tunggu X detik"
+     * - Setelah selesai → reset dan aktifkan kembali
      */
     private fun startLockoutCountdown(durationMs: Long) {
         binding.btnLogin.isEnabled = false
@@ -257,8 +276,8 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Reset semua state lockout:
-     *  - failed_attempts → 0, lockout_time → 0
-     *  - Aktifkan kembali btnLogin, kembalikan teks ke "Masuk"
+     * - failed_attempts → 0, lockout_time → 0
+     * - Aktifkan kembali btnLogin, kembalikan teks ke "Masuk"
      */
     private fun resetLockout() {
         loginPrefs.edit()
@@ -280,3 +299,4 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 }
+

@@ -54,9 +54,11 @@ object TempatSampahNotificationHelper {
                 prefs.edit {
                     putLong(key, now)
                 }
-            }
 
-            scheduleReminder(context, bin)
+                // PERBAIKAN: scheduleReminder dipindahkan ke SINI
+                // Agar alarm tidak di-reset dari 0 setiap kali data sensor masuk
+                scheduleReminder(context, bin)
+            }
         }
     }
 
@@ -73,7 +75,7 @@ object TempatSampahNotificationHelper {
         ensureNotificationChannel(context)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_monitor)
+            .setSmallIcon(R.drawable.ic_monitor) // Pastikan ikon ini benar-benar ada di folder res/drawable
             .setContentTitle(context.getString(R.string.notification_reminder_title))
             .setContentText(
                 context.getString(
@@ -103,7 +105,7 @@ object TempatSampahNotificationHelper {
 
     private fun showImmediateNotification(context: Context, bin: TempatSampah) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_monitor)
+            .setSmallIcon(R.drawable.ic_monitor) // Pastikan ikon ini benar-benar ada
             .setContentTitle(context.getString(R.string.notification_full_title))
             .setContentText(
                 context.getString(
@@ -192,10 +194,10 @@ object TempatSampahNotificationHelper {
 
     private fun canPostNotifications(context: Context): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun ensureNotificationChannel(context: Context) {
